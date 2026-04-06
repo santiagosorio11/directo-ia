@@ -1,6 +1,7 @@
 "use client";
 
 import { useOnboarding } from "@/app/context/OnboardingContext";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   ArrowRight, 
@@ -26,11 +27,13 @@ import { ProgressBar } from "../ui/ProgressBar";
 
 export function SuccessStep() {
   const { data, updateData, setStep } = useOnboarding();
+  const router = useRouter();
   const [chatMessages, setChatMessages] = useState<{ role: "user" | "bot"; content: string }[]>([
     { role: "bot", content: `¡Hola! Soy ${data.agentName}, tu asesor de ventas. ¿Cómo puedo ayudarte hoy?` }
   ]);
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [isActivating, setIsActivating] = useState(false);
   const [sessionId] = useState(() => Math.random().toString(36).substring(7));
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -81,7 +84,7 @@ export function SuccessStep() {
 
   return (
     <div className="flex flex-col h-full gap-8 max-w-4xl mx-auto py-12 pt-16 font-sans text-center">
-      <ProgressBar currentStep={5} totalSteps={5} />
+      <ProgressBar currentStep={6} totalSteps={6} />
       
       <motion.div 
         initial={{ opacity: 0, scale: 0.8 }}
@@ -173,40 +176,44 @@ export function SuccessStep() {
       </div>
 
       <div className="flex flex-col items-center gap-6 pt-12 pb-20">
-        <div className="max-w-md w-full p-10 bg-primary/10 rounded-[40px] border border-primary/20 flex flex-col gap-8 shadow-2xl shadow-primary/5">
+        <div className="max-w-md w-full p-10 bg-primary/10 rounded-[40px] border border-primary/20 flex flex-col gap-8 shadow-2xl shadow-primary/5 relative overflow-hidden">
+           {isActivating && (
+             <div className="absolute inset-0 bg-black/80 backdrop-blur-md z-50 flex flex-col items-center justify-center gap-5">
+               <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+               <span className="text-sm font-bold text-primary uppercase tracking-widest animate-pulse font-heading">Activando tu agente...</span>
+             </div>
+           )}
            <div className="flex flex-col gap-3">
-             <h3 className="text-3xl font-black font-heading uppercase tracking-tighter">Activa tu IA hoy</h3>
-             <p className="text-md text-foreground/60 font-medium">Crea tu cuenta para conectar este asesor con tu WhatsApp y empezar a vender en automático.</p>
+             <h3 className="text-3xl font-black font-heading uppercase tracking-tighter">Activa tu Agente IA</h3>
+             <p className="text-md text-foreground/60 font-medium">Conecta este asesor con tu WhatsApp y empieza a vender en automático.</p>
            </div>
            
            <button 
               onClick={async () => {
-                if (window.confirm("¿Seguro que deseas crear tu cuenta usando estos datos?")) {
-                  try {
-                    // Aquí envías el webhook maestro de n8n para GHL
-                    // Reemplaza "TU_N8N_WEBHOOK_GHL" cuando crees tu flujo en n8n
-                    await fetch("TU_N8N_WEBHOOK_GHL", {
-                      method: "POST",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({
-                        email: data.email,
-                        phone: data.phone,
-                        businessName: data.businessName,
-                        address: data.address,
-                        agentName: data.agentName,
-                        systemPrompt: data.generatedSystemPrompt
-                      })
-                    });
-                    alert("¡Misión Cumplida! Tus datos fueron enviados a GHL. Tu subcuenta está siendo creada.");
-                  } catch (e) {
-                    alert("Tuvimos un error al comunicar con el Webhook. Revisa la consola.");
+                setIsActivating(true);
+                try {
+                  const res = await fetch("/api/activate", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data)
+                  });
+                  const result = await res.json();
+                  if (result.success && result.restaurantId) {
+                    localStorage.setItem("directo_restaurant_id", result.restaurantId);
+                    router.push("/dashboard");
+                  } else {
+                    throw new Error(result.error || "Error desconocido");
                   }
+                } catch (e: any) {
+                  alert("Error al activar: " + e.message);
+                  setIsActivating(false);
                 }
               }}
-              className="w-full flex items-center justify-center gap-4 px-8 py-6 bg-primary text-white rounded-[28px] font-black text-2xl shadow-2xl shadow-primary/30 hover:scale-[1.02] active:scale-95 transition-all"
+              disabled={isActivating}
+              className="w-full flex items-center justify-center gap-4 px-8 py-6 bg-primary text-white rounded-[28px] font-black text-2xl shadow-2xl shadow-primary/30 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50"
            >
-             Crear cuenta en GHL
-             <ArrowRight className="w-8 h-8" />
+             Activar mi Agente IA
+             <Zap className="w-8 h-8 fill-current" />
            </button>
            
            <p className="text-[10px] text-foreground/40 uppercase tracking-widest font-bold">Sin contratos · Cancela cuando quieras</p>
