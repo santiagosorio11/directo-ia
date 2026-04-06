@@ -15,23 +15,27 @@ export async function POST(req: NextRequest) {
     // 2. Extraemos el último mensaje del usuario
     const lastUserMessage = messages[messages.length - 1]?.content;
 
-    // 3. Actualizamos el historial en Redis SOLO con el mensaje del usuario
+    // 3. Llamada al Agente Maestro de n8n de forma síncrona
+    const agentResponse = await callMasterAgent({
+      systemPrompt: systemPrompt,
+      message: lastUserMessage,
+      history: history,
+      sessionId: sessionId 
+    });
+
+    // Extraemos la respuesta final según como responda tu n8n ("Respond when last node finishes")
+    const replyText = agentResponse.output || agentResponse.message || agentResponse;
+
+    // 4. Actualizamos el historial completo (usuario + bot)
     const updatedHistory = [
       ...history,
-      { role: 'user', content: lastUserMessage }
+      { role: 'user', content: lastUserMessage },
+      { role: 'assistant', content: replyText }
     ];
     await saveChatHistory(sessionId, updatedHistory);
 
-    // 4. Llamada al Agente Maestro de n8n (Fire and Forget or immediate 200 via webhook config in n8n)
-    // No esperamos la respuesta final `agentResponse.output` ya que n8n configurará "Respond immediately".
-    callMasterAgent({
-      systemPrompt: systemPrompt,
-      message: lastUserMessage,
-      history: history, // Mandatory context
-      sessionId: sessionId // WE MUST SEND THIS SO N8N CAN PASS IT BACK
-    }).catch(err => console.error("n8n dispatch error:", err));
-
-    return NextResponse.json({ status: "processing" });
+    // 5. Retornamos directamente el mensaje a la interfaz
+    return NextResponse.json({ message: replyText });
 
   } catch (error: any) {
     console.error("Chat API n8n/Redis Error:", error.message);

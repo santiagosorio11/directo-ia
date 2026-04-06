@@ -23,7 +23,6 @@ import {
 } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { ProgressBar } from "../ui/ProgressBar";
-import { getPusherClient } from "@/lib/pusher";
 
 export function SuccessStep() {
   const { data, updateData, setStep } = useOnboarding();
@@ -35,23 +34,7 @@ export function SuccessStep() {
   const [sessionId] = useState(() => Math.random().toString(36).substring(7));
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    // Suscribirse a Pusher para mensajes en tiempo real del agente de n8n
-    const pusher = getPusherClient();
-    if (pusher) {
-      const channel = pusher.subscribe(`chat-${sessionId}`);
-      channel.bind('new-message', (data: { role: 'bot' | 'user', content: string }) => {
-        if (data.role === 'bot') {
-          setChatMessages(prev => [...prev, { role: "bot", content: data.content }]);
-          setIsTyping(false);
-        }
-      });
 
-      return () => {
-        pusher.unsubscribe(`chat-${sessionId}`);
-      };
-    }
-  }, [sessionId]);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -71,7 +54,7 @@ export function SuccessStep() {
     setIsTyping(true);
 
     try {
-      await fetch("/api/chat", {
+      const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -81,8 +64,14 @@ export function SuccessStep() {
         }),
       });
 
-      // NO esperamos "result.message" aquí.
-      // Pusher inyectará el nuevo mensaje y apagará isTyping = false cuando reciba el evento "new-message"
+      const result = await res.json();
+      
+      if (result.message && !chatMessages.some(m => m.content === result.message)) {
+        setChatMessages(prev => [...prev, { role: "bot", content: result.message }]);
+      } else if (result.error) {
+        setChatMessages(prev => [...prev, { role: "bot", content: "Hubo un error con la IA: " + result.error }]);
+      }
+      setIsTyping(false);
     } catch (err) {
       console.error("Chat sandbox error", err);
       setChatMessages(prev => [...prev, { role: "bot", content: "No pude conectar con el asistente. Verifica tu conexión." }]);
@@ -191,12 +180,32 @@ export function SuccessStep() {
            </div>
            
            <button 
-              onClick={() => {
-                window.location.href = "https://app.iaorbita.com/signup"; // Ejemplo de redirección a registro
+              onClick={async () => {
+                if (window.confirm("¿Seguro que deseas crear tu cuenta usando estos datos?")) {
+                  try {
+                    // Aquí envías el webhook maestro de n8n para GHL
+                    // Reemplaza "TU_N8N_WEBHOOK_GHL" cuando crees tu flujo en n8n
+                    await fetch("TU_N8N_WEBHOOK_GHL", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({
+                        email: data.email,
+                        phone: data.phone,
+                        businessName: data.businessName,
+                        address: data.address,
+                        agentName: data.agentName,
+                        systemPrompt: data.generatedSystemPrompt
+                      })
+                    });
+                    alert("¡Misión Cumplida! Tus datos fueron enviados a GHL. Tu subcuenta está siendo creada.");
+                  } catch (e) {
+                    alert("Tuvimos un error al comunicar con el Webhook. Revisa la consola.");
+                  }
+                }
               }}
               className="w-full flex items-center justify-center gap-4 px-8 py-6 bg-primary text-white rounded-[28px] font-black text-2xl shadow-2xl shadow-primary/30 hover:scale-[1.02] active:scale-95 transition-all"
            >
-             Activar mi Asesor
+             Crear cuenta en GHL
              <ArrowRight className="w-8 h-8" />
            </button>
            

@@ -3,6 +3,11 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
 
 export interface OnboardingData {
+  // Step 0: Registration
+  email: string;
+  phone: string;
+  address: string;
+  
   // Step 1: Identity
   businessName: string;
   foodType: string;
@@ -34,6 +39,9 @@ export interface OnboardingData {
 }
 
 const defaultData: OnboardingData = {
+  email: "",
+  phone: "",
+  address: "",
   businessName: "",
   foodType: "",
   schedule: "",
@@ -75,7 +83,7 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
     setData((prev) => ({ ...prev, ...fields }));
   };
 
-  const nextStep = () => setCurrentStep((prev) => Math.min(prev + 1, 5));
+  const nextStep = () => setCurrentStep((prev) => Math.min(prev + 1, 6));
   const prevStep = () => setCurrentStep((prev) => Math.max(prev - 1, 0));
   const setStep = (step: number) => setCurrentStep(step);
 

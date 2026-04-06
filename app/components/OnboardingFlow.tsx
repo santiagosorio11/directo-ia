@@ -2,6 +2,7 @@
 
 import { useOnboarding } from "@/app/context/OnboardingContext";
 import { AnimatePresence, motion } from "framer-motion";
+import { RegistrationStep } from "./steps/RegistrationStep";
 import { IdentityStep } from "./steps/IdentityStep";
 import { MenuOCRStep } from "./steps/MenuOCRStep";
 import { StrategyStep } from "./steps/StrategyStep";
@@ -57,12 +58,13 @@ export function OnboardingFlow() {
           className="w-full h-full flex flex-col items-center"
         >
           <div className="w-full max-w-4xl px-4 md:px-6">
-            {currentStep === 0 && <IdentityStep />}
-            {currentStep === 1 && <MenuOCRStep />}
-            {currentStep === 2 && <StrategyStep />}
-            {currentStep === 3 && <PersonalityStep />}
-            {currentStep === 4 && <OperationStep />}
-            {currentStep === 5 && <SuccessStep />}
+            {currentStep === 0 && <RegistrationStep />}
+            {currentStep === 1 && <IdentityStep />}
+            {currentStep === 2 && <MenuOCRStep />}
+            {currentStep === 3 && <StrategyStep />}
+            {currentStep === 4 && <PersonalityStep />}
+            {currentStep === 5 && <OperationStep />}
+            {currentStep === 6 && <SuccessStep />}
           </div>
         </motion.div>
       </AnimatePresence>

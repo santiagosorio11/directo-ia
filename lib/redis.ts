@@ -10,11 +10,12 @@ let useFallback = false;
 try {
   redis = new Redis(REDIS_URL, {
     maxRetriesPerRequest: 1,
-    retryStrategy: () => null // No reintentar si falla localmente, pasa directo al fallback
+    enableOfflineQueue: false, // ¡Critico! Si no conecto, NO encoles los comandos (sino se queda cargando infinito)
+    retryStrategy: () => null
   });
   
   redis.on('error', (e) => {
-    console.warn("💡 No se detectó Redis corriendo (o falló). Usando memoria temporal para tu entorno de pruebas local.");
+    console.warn("💡 No se detectó Redis corriendo (o falló). Usando memoria temporal para tu entorno de pruebas local. Error: ", e.message);
     useFallback = true;
   });
 } catch (e) {

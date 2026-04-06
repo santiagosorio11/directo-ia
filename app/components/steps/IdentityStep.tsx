@@ -52,7 +52,7 @@ export function IdentityStep() {
 
   return (
     <div className="flex flex-col h-full gap-8 max-w-2xl mx-auto py-12 pt-16 font-sans text-foreground">
-      <ProgressBar currentStep={0} totalSteps={5} />
+      <ProgressBar currentStep={1} totalSteps={6} />
       
       <motion.div 
         initial={{ opacity: 0, y: 15 }} 
@@ -71,19 +71,6 @@ export function IdentityStep() {
 
       <div className="flex flex-col gap-10 mt-6 bg-white dark:bg-black border border-black/5 dark:border-white/5 p-8 rounded-[36px] shadow-sm relative overflow-hidden">
         <div className="flex flex-col gap-8">
-          <div className="space-y-3 relative group">
-            <label className="text-[11px] font-bold text-foreground/40 uppercase tracking-widest px-1">¿Cómo se llama tu negocio?</label>
-            <div className="relative">
-              <input 
-                type="text" 
-                value={data.businessName}
-                onChange={(e) => updateData({ businessName: e.target.value })}
-                placeholder="Ej. DIRECTO Pasta & Grill"
-                className="w-full bg-foreground/[0.03] border-none px-6 py-5 rounded-[24px] focus:ring-4 focus:ring-primary/10 outline-none transition-all placeholder:text-foreground/20 text-lg font-semibold"
-              />
-            </div>
-          </div>
-
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="space-y-3">
               <label className="text-[11px] font-bold text-foreground/40 uppercase tracking-widest px-1">Giro o Tipo de Comida</label>
@@ -142,7 +129,7 @@ export function IdentityStep() {
             if (isListening) setIsListening(false);
             nextStep();
           }}
-          disabled={!data.businessName || isProcessing}
+          disabled={isProcessing}
           className="w-full flex items-center justify-center gap-3 px-8 py-5 bg-primary text-white rounded-[24px] font-extrabold text-xl shadow-xl shadow-primary/20 active:scale-95 transition-all disabled:opacity-20"
         >
           Continuar
