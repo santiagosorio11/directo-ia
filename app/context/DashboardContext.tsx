@@ -45,6 +45,7 @@ export interface WhatsAppConfig {
   id: string;
   is_connected: boolean;
   phone_number: string;
+  qr_code_url?: string;
 }
 
 interface DashboardContextProps {
