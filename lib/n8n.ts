@@ -15,7 +15,7 @@ export async function generateMasterPrompt(restaurantData: any) {
   return data.generatedPrompt || data; 
 }
 
-export async function callMasterAgent(payload: { systemPrompt: string; message: string; history: any[] }) {
+export async function callMasterAgent(payload: { systemPrompt: string; message: string; history: any[]; sessionId?: string }) {
   const response = await fetch(N8N_MASTER_AGENT_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

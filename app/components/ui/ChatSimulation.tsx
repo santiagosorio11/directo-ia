@@ -42,7 +42,7 @@ export function ChatSimulation() {
   }, []);
 
   return (
-    <div className="w-full max-w-[340px] md:max-w-md bg-white dark:bg-[#1C1C1E] rounded-[40px] p-6 shadow-2xl border border-black/5 dark:border-white/10 overflow-hidden flex flex-col h-[400px]">
+    <div className="w-full h-full flex flex-col">
       <div className="flex items-center gap-3 pb-4 mb-4 border-b border-black/5 dark:border-white/5">
         <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white shadow-lg shadow-primary/20">
           <Bot className="w-5 h-5" />

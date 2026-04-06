@@ -1,36 +1,65 @@
-import Redis from 'ioredis';
+import { Redis } from 'ioredis';
 
-const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379'; // El usuario configurará su VPS
+const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
 
-let redis: Redis;
+// Fallback en memoria por si el usuario no tiene Redis corriendo en local
+const memoryFallback = new Map<string, any>();
+let redis: Redis | null = null;
+let useFallback = false;
 
 try {
-  redis = new Redis(REDIS_URL);
+  redis = new Redis(REDIS_URL, {
+    maxRetriesPerRequest: 1,
+    retryStrategy: () => null // No reintentar si falla localmente, pasa directo al fallback
+  });
+  
+  redis.on('error', (e) => {
+    console.warn("💡 No se detectó Redis corriendo (o falló). Usando memoria temporal para tu entorno de pruebas local.");
+    useFallback = true;
+  });
 } catch (e) {
-  console.error("Redis connection error:", e);
-  // Fallback for dev if needed
+  useFallback = true;
 }
 
 export async function getChatHistory(sessionId: string) {
-  if (!redis) return [];
-  const history = await redis.get(`chat:${sessionId}:history`);
-  return history ? JSON.parse(history) : [];
+  if (useFallback || !redis) {
+    return memoryFallback.get(`chat:${sessionId}:history`) || [];
+  }
+  try {
+    const history = await redis.get(`chat:${sessionId}:history`);
+    return history ? JSON.parse(history) : [];
+  } catch(e) {
+    return memoryFallback.get(`chat:${sessionId}:history`) || [];
+  }
 }
 
 export async function saveChatHistory(sessionId: string, history: any[]) {
-  if (!redis) return;
-  // Expira en 24 horas por defecto para chats temporales
-  await redis.set(`chat:${sessionId}:history`, JSON.stringify(history), 'EX', 86400);
+  if (useFallback || !redis) {
+    memoryFallback.set(`chat:${sessionId}:history`, history);
+    return;
+  }
+  try {
+    await redis.set(`chat:${sessionId}:history`, JSON.stringify(history), 'EX', 86400);
+  } catch(e) {
+    memoryFallback.set(`chat:${sessionId}:history`, history);
+  }
 }
 
 export async function getMasterPrompt(sessionId: string) {
-  if (!redis) return null;
-  return await redis.get(`chat:${sessionId}:masterPrompt`);
+  if (useFallback || !redis) return memoryFallback.get(`chat:${sessionId}:masterPrompt`);
+  try {
+    return await redis.get(`chat:${sessionId}:masterPrompt`);
+  } catch(e) { return null; }
 }
 
 export async function saveMasterPrompt(sessionId: string, prompt: string) {
-  if (!redis) return;
-  await redis.set(`chat:${sessionId}:masterPrompt`, prompt, 'EX', 86400);
+  if (useFallback || !redis) {
+    memoryFallback.set(`chat:${sessionId}:masterPrompt`, prompt);
+    return;
+  }
+  try {
+    await redis.set(`chat:${sessionId}:masterPrompt`, prompt, 'EX', 86400);
+  } catch(e) {}
 }
 
-export default redis!;
+export default redis;

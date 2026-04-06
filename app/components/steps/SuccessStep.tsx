@@ -71,7 +71,7 @@ export function SuccessStep() {
     setIsTyping(true);
 
     try {
-      const res = await fetch("/api/chat", {
+      await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -81,13 +81,8 @@ export function SuccessStep() {
         }),
       });
 
-      const result = await res.json();
-      // Si la respuesta es síncrona, la añadimos. 
-      // Si n8n responde por webhook (asíncrono), Pusher se encargará arriba.
-      if (result.message && !chatMessages.some(m => m.content === result.message)) {
-        setChatMessages(prev => [...prev, { role: "bot", content: result.message }]);
-        setIsTyping(false);
-      }
+      // NO esperamos "result.message" aquí.
+      // Pusher inyectará el nuevo mensaje y apagará isTyping = false cuando reciba el evento "new-message"
     } catch (err) {
       console.error("Chat sandbox error", err);
       setChatMessages(prev => [...prev, { role: "bot", content: "No pude conectar con el asistente. Verifica tu conexión." }]);
