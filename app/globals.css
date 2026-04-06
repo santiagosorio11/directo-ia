@@ -1,0 +1,58 @@
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Manrope:wght@400;500;600&display=swap');
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-border: var(--border);
+  --color-card: var(--card);
+  --color-ring: var(--ring);
+  --font-heading: 'Syne', sans-serif;
+  --font-sans: 'Manrope', sans-serif;
+}
+
+/* Base DIRECTO Design System - Premium Dark */
+:root {
+  --background: #09090B;
+  --foreground: #FFFFFF;
+  --primary: #FF5200;
+  --primary-foreground: #FFFFFF;
+  --border: #27272A;
+  --card: #18181B;
+  --muted: #71717A;
+  --muted-foreground: #A1A1AA;
+  --ring: #FF5200;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: 'Manrope', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Syne', sans-serif;
+  letter-spacing: -0.02em;
+}
+
+/* Custom Scrollbar for Premium Feel */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #09090B;
+}
+::-webkit-scrollbar-thumb {
+  background: #27272A;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3F3F46;
+}
