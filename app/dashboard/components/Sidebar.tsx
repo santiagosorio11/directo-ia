@@ -3,6 +3,8 @@
 import { useDashboard } from "@/app/context/DashboardContext";
 import { useState } from "react";
 import { Bot, ClipboardList, Wallet, Columns, Utensils, MessageCircle, Settings, LogOut, ChevronRight } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 
 export default function Sidebar() {
   const { restaurant, agentConfig, logout } = useDashboard();
@@ -22,9 +24,9 @@ export default function Sidebar() {
     <div className="w-72 bg-[#101014] border-r border-white/5 flex flex-col justify-between p-6">
       <div>
         <div className="flex items-center gap-3 mb-10 pl-2">
-          <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex flex-col items-center justify-center pt-1 font-heading font-black text-xs text-[#FF5200]">
-            DIR
-          </div>
+          <Link href="/" className="relative w-10 h-10 rounded-xl overflow-hidden bg-primary shadow-lg shadow-primary/20 hover:scale-105 transition-transform">
+            <Image src="/LOGODIRECTO.jpg" alt="DIRECTO" fill className="object-cover" />
+          </Link>
           <div>
             <h2 className="font-bold text-sm leading-tight text-white/90">
               {restaurant?.business_name || "Cargando..."}
@@ -52,7 +54,7 @@ export default function Sidebar() {
                 }}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all font-semibold text-sm ${
                   isActive 
-                    ? "bg-[#FF5200] text-white shadow-lg shadow-[#FF5200]/10" 
+                    ? "bg-primary text-white shadow-lg shadow-primary/10" 
                     : "text-white/50 hover:bg-white/5 hover:text-white"
                 }`}
               >

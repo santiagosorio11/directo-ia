@@ -2,6 +2,7 @@
 
 import { useOnboarding } from "@/app/context/OnboardingContext";
 import { AnimatePresence, motion } from "framer-motion";
+import { AuthStep } from "./steps/AuthStep";
 import { RegistrationStep } from "./steps/RegistrationStep";
 import { IdentityStep } from "./steps/IdentityStep";
 import { MenuOCRStep } from "./steps/MenuOCRStep";
@@ -32,6 +33,10 @@ export function OnboardingFlow() {
   const [prevStep, setPrevStep] = useState(0);
 
   useEffect(() => {
+    console.log("OnboardingFlow mount/update - currentStep:", currentStep);
+  }, [currentStep]);
+
+  useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
     if (currentStep > prevStep) {
       setDirection(1);
@@ -58,13 +63,14 @@ export function OnboardingFlow() {
           className="w-full h-full flex flex-col items-center"
         >
           <div className="w-full max-w-4xl px-4 md:px-6">
-            {currentStep === 0 && <RegistrationStep />}
-            {currentStep === 1 && <IdentityStep />}
-            {currentStep === 2 && <MenuOCRStep />}
-            {currentStep === 3 && <StrategyStep />}
-            {currentStep === 4 && <PersonalityStep />}
-            {currentStep === 5 && <OperationStep />}
-            {currentStep === 6 && <SuccessStep />}
+            {currentStep === 0 && <AuthStep />}
+            {currentStep === 1 && <RegistrationStep />}
+            {currentStep === 2 && <IdentityStep />}
+            {currentStep === 3 && <MenuOCRStep />}
+            {currentStep === 4 && <StrategyStep />}
+            {currentStep === 5 && <PersonalityStep />}
+            {currentStep === 6 && <OperationStep />}
+            {currentStep === 7 && <SuccessStep />}
           </div>
         </motion.div>
       </AnimatePresence>

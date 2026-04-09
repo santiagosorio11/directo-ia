@@ -84,7 +84,7 @@ export function SuccessStep() {
 
   return (
     <div className="flex flex-col h-full gap-8 max-w-4xl mx-auto py-12 pt-16 font-sans text-center">
-      <ProgressBar currentStep={6} totalSteps={6} />
+      <ProgressBar currentStep={7} totalSteps={7} />
       
       <motion.div 
         initial={{ opacity: 0, scale: 0.8 }}
@@ -101,22 +101,15 @@ export function SuccessStep() {
         </div>
       </motion.div>
 
-      <div className="mt-10 bg-card border border-white/5 p-8 md:p-12 rounded-[40px] shadow-sm flex flex-col lg:flex-row items-center gap-12">
-        <div className="flex flex-col gap-8 w-full max-w-sm lg:w-1/3 text-left">
-           <div className="space-y-4">
-             <label className="text-[11px] font-bold text-foreground/40 uppercase tracking-widest">Personaliza su nombre</label>
-             <div className="relative group">
-               <Bot className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-primary" />
-               <input 
-                 type="text" 
-                 value={data.agentName}
-                 onChange={(e) => updateData({ agentName: e.target.value })}
-                 placeholder="Ej. Asesor Mao"
-                 className="w-full bg-white/5 border border-white/10 px-12 py-4 rounded-[20px] text-lg font-bold focus:ring-4 focus:ring-primary/10 outline-none transition-all"
-               />
-             </div>
-             <p className="text-[10px] text-white/30 font-medium">Este es el nombre con el que se identificará ante tus clientes en WhatsApp.</p>
+      <div className="mt-10 bg-card border border-white/5 p-8 md:p-12 rounded-[40px] shadow-sm flex flex-col lg:flex-row items-center justify-center gap-12">
+        <div className="flex flex-col gap-6 w-full max-w-sm lg:w-1/3 text-left">
+           <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center text-primary mb-2">
+             <MessageSquare className="w-8 h-8" />
            </div>
+           <h3 className="text-3xl font-extrabold font-heading tracking-tight leading-tight">Pruébame.</h3>
+           <p className="text-foreground/60 font-medium leading-relaxed">
+             He leído todo sobre tu restaurante y tus reglas de operación. Escríbeme y probemos cómo atiendo a los clientes.
+           </p>
         </div>
 
         <div className="flex flex-col gap-0 w-full max-w-md border border-white/5 rounded-[32px] overflow-hidden bg-foreground/[0.01]">

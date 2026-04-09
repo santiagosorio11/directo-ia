@@ -8,11 +8,11 @@ import { ProgressBar } from "../ui/ProgressBar";
 export function RegistrationStep() {
   const { data, updateData, nextStep, isProcessing } = useOnboarding();
 
-  const isValid = data.businessName && data.email && data.phone && data.address;
+  const isValid = data.businessName && data.phone && data.address;
 
   return (
     <div className="flex flex-col h-full gap-8 max-w-2xl mx-auto py-12 pt-16 font-sans text-foreground">
-      <ProgressBar currentStep={0} totalSteps={6} />
+      <ProgressBar currentStep={1} totalSteps={7} />
       
       <motion.div 
         initial={{ opacity: 0, y: 15 }} 
@@ -45,16 +45,15 @@ export function RegistrationStep() {
             </div>
           </div>
 
-          <div className="space-y-3 relative">
+          <div className="space-y-3 relative opacity-50 cursor-not-allowed">
             <label className="text-[11px] font-bold text-foreground/40 uppercase tracking-widest px-1">Correo Electrónico</label>
             <div className="relative">
               <Mail className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-foreground/20" />
               <input 
                 type="email" 
                 value={data.email}
-                onChange={(e) => updateData({ email: e.target.value })}
-                placeholder="correo@ejemplo.com"
-                className="w-full bg-foreground/[0.03] border-none px-14 py-5 rounded-[24px] focus:ring-4 focus:ring-primary/10 outline-none transition-all placeholder:text-foreground/20 text-lg font-semibold"
+                disabled
+                className="w-full bg-foreground/[0.03] border-none px-14 py-5 rounded-[24px] outline-none text-lg font-semibold cursor-not-allowed"
               />
             </div>
           </div>

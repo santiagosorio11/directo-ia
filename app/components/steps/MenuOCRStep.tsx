@@ -123,7 +123,7 @@ export function MenuOCRStep() {
 
   return (
     <div className="flex flex-col h-full gap-8 max-w-4xl mx-auto py-12 pt-16 font-sans">
-      <ProgressBar currentStep={1} totalSteps={5} />
+      <ProgressBar currentStep={3} totalSteps={7} />
       
       <motion.div 
         initial={{ opacity: 0, y: 15 }} 
@@ -134,8 +134,8 @@ export function MenuOCRStep() {
           <ClipboardList className="w-8 h-8" />
         </div>
         <div className="flex flex-col gap-2">
-           <h2 className="text-3xl font-extrabold text-foreground tracking-tight font-heading">Sube tu Menú</h2>
-           <p className="text-lg text-foreground/50 max-w-md mx-auto font-medium">Digitalizaremos tus platos al instante.</p>
+           <h2 className="text-3xl font-extrabold text-foreground tracking-tight font-heading">Muéstrame Tu Menú</h2>
+           <p className="text-lg text-foreground/50 max-w-md mx-auto font-medium">Necesito saber qué venderemos. Sube una foto o documento del menú actual.</p>
         </div>
       </motion.div>
 

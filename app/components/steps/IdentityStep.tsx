@@ -52,7 +52,7 @@ export function IdentityStep() {
 
   return (
     <div className="flex flex-col h-full gap-8 max-w-2xl mx-auto py-12 pt-16 font-sans text-foreground">
-      <ProgressBar currentStep={1} totalSteps={6} />
+      <ProgressBar currentStep={2} totalSteps={7} />
       
       <motion.div 
         initial={{ opacity: 0, y: 15 }} 
@@ -64,8 +64,8 @@ export function IdentityStep() {
           <Store className="w-8 h-8" />
         </div>
         <div className="flex flex-col gap-2">
-           <h2 className="text-3xl md:text-3xl font-extrabold text-foreground tracking-tight font-heading uppercase">Tu Identidad Digital</h2>
-           <p className="text-lg text-foreground/50 max-w-md mx-auto font-medium">Empezaremos por lo básico para crear tu perfil de venta en DIRECTO.</p>
+           <h2 className="text-3xl md:text-3xl font-extrabold text-foreground tracking-tight font-heading uppercase">Hola, seré tu Asesor de Ventas</h2>
+           <p className="text-lg text-foreground/50 max-w-md mx-auto font-medium">Para ayudarte a vender, primero cuéntame sobre mi nuevo lugar de trabajo.</p>
         </div>
       </motion.div>
 
@@ -73,7 +73,7 @@ export function IdentityStep() {
         <div className="flex flex-col gap-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="space-y-3">
-              <label className="text-[11px] font-bold text-foreground/40 uppercase tracking-widest px-1">Giro o Tipo de Comida</label>
+              <label className="text-[11px] font-bold text-foreground/40 uppercase tracking-widest px-1">¿Qué tipo de comida preparamos?</label>
               <div className="relative">
                 <ChefHat className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-foreground/20" />
                 <input 
@@ -86,7 +86,7 @@ export function IdentityStep() {
               </div>
             </div>
             <div className="space-y-3">
-              <label className="text-[11px] font-bold text-foreground/40 uppercase tracking-widest px-1">Horario de Atención</label>
+              <label className="text-[11px] font-bold text-foreground/40 uppercase tracking-widest px-1">¿En qué horarios atienden?</label>
               <div className="relative">
                 <Clock className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-foreground/20" />
                 <input 
@@ -101,12 +101,12 @@ export function IdentityStep() {
           </div>
 
           <div className="space-y-3 relative">
-            <label className="text-[11px] font-bold text-foreground/40 uppercase tracking-widest px-1">Describe tu restaurante</label>
+            <label className="text-[11px] font-bold text-foreground/40 uppercase tracking-widest px-1">Háblame sobre el restaurante libremente (Audio o Texto)</label>
             <div className="relative">
               <textarea 
                 value={data.businessDescription}
                 onChange={(e) => updateData({ businessDescription: e.target.value })}
-                placeholder="Cuéntanos un poco sobre tu historia, especialidades o ambiente..."
+                placeholder="Dime todo lo que deba saber: nuestra historia, especialidades, cómo es el local..."
                 className="w-full h-40 bg-foreground/[0.03] border-none px-6 py-5 rounded-[24px] focus:ring-4 focus:ring-primary/10 outline-none transition-all resize-none pr-16 text-lg font-semibold"
               />
               <button 

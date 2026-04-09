@@ -29,10 +29,10 @@ export function LandingStep() {
              className="w-20 h-20 relative"
           >
              <Image 
-                src="/LOGODIRECTO.jpeg" 
+                src="/LOGODIRECTO.jpg" 
                 alt="DIRECTO Logo" 
                 fill 
-                className="object-contain rounded-2xl grayscale brightness-125 hover:grayscale-0 transition-all duration-500"
+                className="object-contain rounded-2xl brightness-125 hover:scale-110 transition-all duration-500"
              />
           </motion.div>
 

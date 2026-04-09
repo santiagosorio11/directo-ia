@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Manrope:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap');
 @import "tailwindcss";
 
 @custom-variant dark (&:is(.dark *));
@@ -12,26 +12,26 @@
   --color-card: var(--card);
   --color-ring: var(--ring);
   --font-heading: 'Syne', sans-serif;
-  --font-sans: 'Manrope', sans-serif;
+  --font-sans: 'DM Sans', sans-serif;
 }
 
-/* Base DIRECTO Design System - Premium Dark */
+/* Base DIRECTO Design System - Premium Crimson */
 :root {
-  --background: #09090B;
+  --background: #1A0D12;
   --foreground: #FFFFFF;
-  --primary: #FF5200;
+  --primary: #C92A5E;
   --primary-foreground: #FFFFFF;
-  --border: #27272A;
-  --card: #18181B;
-  --muted: #71717A;
-  --muted-foreground: #A1A1AA;
-  --ring: #FF5200;
+  --border: #2D1D24;
+  --card: #24141A;
+  --muted: #9E8B92;
+  --muted-foreground: #4A3840;
+  --ring: #C92A5E;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: 'Manrope', sans-serif;
+  font-family: 'DM Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;

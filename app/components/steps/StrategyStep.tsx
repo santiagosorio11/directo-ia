@@ -64,8 +64,8 @@ export function StrategyStep() {
   };
 
   return (
-    <div className="flex flex-col h-full gap-8 max-w-2xl mx-auto py-12 pt-1 font-sans">
-      <ProgressBar currentStep={2} totalSteps={5} />
+    <div className="flex flex-col h-full gap-8 max-w-2xl mx-auto py-12 pt-16 font-sans">
+      <ProgressBar currentStep={4} totalSteps={7} />
       
       <motion.div 
         initial={{ opacity: 0, y: 15 }} 
@@ -77,8 +77,8 @@ export function StrategyStep() {
           <Target className="w-8 h-8" />
         </div>
         <div className="flex flex-col gap-2">
-           <h2 className="text-3xl md:text-3xl font-extrabold text-foreground tracking-tight font-heading">Estrategia de Venta</h2>
-           <p className="text-lg text-foreground/50 max-w-md mx-auto font-medium">Define qué quieres lograr con tu IA de <span className="text-primary">DIRECTO</span>.</p>
+           <h2 className="text-3xl md:text-3xl font-extrabold text-foreground tracking-tight font-heading">¿Qué objetivos tienes para mí?</h2>
+           <p className="text-lg text-foreground/50 max-w-md mx-auto font-medium">Dime cuál es tu estrategia y qué metas de venta debo perseguir.</p>
         </div>
       </motion.div>
 
@@ -111,12 +111,12 @@ export function StrategyStep() {
 
         <div className="space-y-6 pt-6 border-t border-white/5">
           <div className="space-y-3">
-            <label className="text-[11px] font-bold text-foreground/40 uppercase tracking-widest px-1">¿Cual es tu producto estrella?</label>
+            <label className="text-[11px] font-bold text-foreground/40 uppercase tracking-widest px-1">¿Cuál es el producto que más debo impulsar?</label>
             <input 
               type="text" 
               value={data.starProduct}
               onChange={(e) => updateData({ starProduct: e.target.value })}
-              placeholder="Ej. La Burger DIRECTO Especial"
+              placeholder="Ej. La especialidad de la casa, bebidas grandes..."
               className="w-full bg-white/5 border-none px-6 py-5 rounded-[24px] focus:ring-4 focus:ring-primary/10 outline-none transition-all placeholder:text-white/10 text-lg font-semibold"
             />
           </div>
@@ -127,7 +127,7 @@ export function StrategyStep() {
               <textarea 
                 value={data.crossSelling}
                 onChange={(e) => updateData({ crossSelling: e.target.value })}
-                placeholder="Dime qué ofrecer para aumentar el ticket promedio..."
+                placeholder="Dime qué extras u opciones ofrecer para subir el ticket..."
                 className="w-full h-32 bg-white/5 border-none px-6 py-5 rounded-[24px] focus:ring-4 focus:ring-primary/10 outline-none transition-all resize-none text-lg font-semibold pr-16 placeholder:text-white/10"
               />
               <button 

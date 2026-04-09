@@ -1,26 +1,82 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase/server";
 
 export async function POST(req: NextRequest) {
   try {
     const data = await req.json();
+    const supabase = await createClient();
+    
+    // Check Authentication
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
-    // 1. Crear el restaurante
-    const { data: restaurant, error: restError } = await supabase
+    // 1. Crear o Actualizar el restaurante
+    // Buscamos primero por user_id, y si no existe, por email (para vincular cuentas viejas)
+    let { data: restaurantRecord } = await supabase
       .from("restaurants")
-      .insert({
-        business_name: data.businessName,
-        email: data.email,
-        phone: data.phone,
-        address: data.address,
-        food_type: data.foodType,
-        schedule: data.schedule,
-        business_description: data.businessDescription,
-      })
-      .select()
-      .single();
+      .select("id, user_id, email")
+      .eq("user_id", user.id)
+      .maybeSingle();
 
-    if (restError) throw restError;
+    if (!restaurantRecord && data.email) {
+      const { data: byEmail } = await supabase
+        .from("restaurants")
+        .select("id, user_id, email")
+        .eq("email", data.email)
+        .maybeSingle();
+      
+      if (byEmail) {
+        restaurantRecord = byEmail;
+      }
+    }
+
+    let restaurant;
+    
+    if (restaurantRecord) {
+      const { data: updated, error } = await supabase
+        .from("restaurants")
+        .update({
+          user_id: user.id, // Aseguramos el vínculo
+          business_name: data.businessName,
+          email: data.email,
+          phone: data.phone,
+          address: data.address,
+          food_type: data.foodType,
+          schedule: data.schedule,
+          business_description: data.businessDescription,
+          updated_at: new Date().toISOString()
+        })
+        .eq("id", restaurantRecord.id)
+        .select()
+        .single();
+      if (error) throw error;
+      restaurant = updated;
+
+      // Limpiamos params viejos para evitar duplicados en tablas dependientes
+      await supabase.from("agent_config").delete().eq("restaurant_id", restaurant.id);
+      await supabase.from("menu_items").delete().eq("restaurant_id", restaurant.id);
+      await supabase.from("whatsapp_config").delete().eq("restaurant_id", restaurant.id);
+    } else {
+      const { data: inserted, error: restError } = await supabase
+        .from("restaurants")
+        .insert({
+          user_id: user.id,
+          business_name: data.businessName,
+          email: data.email,
+          phone: data.phone,
+          address: data.address,
+          food_type: data.foodType,
+          schedule: data.schedule,
+          business_description: data.businessDescription,
+        })
+        .select()
+        .single();
+
+      if (restError) throw restError;
+      restaurant = inserted;
+    }
 
     // 2. Crear la config del agente
     const { error: agentError } = await supabase
@@ -46,6 +102,7 @@ export async function POST(req: NextRequest) {
     await supabase.from("prompt_history").insert({
       restaurant_id: restaurant.id,
       prompt_text: data.generatedSystemPrompt,
+      dynamic_info: {},
       source: "onboarding",
     });
 
@@ -73,6 +130,28 @@ export async function POST(req: NextRequest) {
       restaurant_id: restaurant.id,
       is_connected: false,
     });
+
+    // 6. Integración N8N (Crear Subcuenta GHL)
+    // Send background task or fetch but don't wait aggressively if it takes too long.
+    if (process.env.N8N_GHL_SUBCUENTA_WEBHOOK) {
+      try {
+        // Enviar la informacion necesaria para que n8n cree la subcuenta de GHL
+        await fetch(process.env.N8N_GHL_SUBCUENTA_WEBHOOK, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+             restaurant_id: restaurant.id,
+             business_name: data.businessName,
+             email: data.email,
+             phone: data.phone,
+             address: data.address
+          })
+        });
+        console.log("Webhook N8N enviado para crear subcuenta GHL");
+      } catch (err) {
+         console.error("Error triggerizando subcuenta n8n", err);
+      }
+    }
 
     return NextResponse.json({
       success: true,

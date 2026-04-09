@@ -26,7 +26,7 @@ export interface OnboardingData {
   
   // Step 4: Personality
   tone: string;
-  visualStyle: string;
+  greeting: string;
   
   // Step 5: Operation
   prepTime: string;
@@ -53,7 +53,7 @@ const defaultData: OnboardingData = {
   starProduct: "",
   crossSelling: "",
   tone: "Relajado",
-  visualStyle: "Moderno",
+  greeting: "¡Hola! Bienvenido a nuestro restaurante.",
   prepTime: "15-20 min",
   paymentMethods: ["Efectivo", "Online"],
   dishPolicies: "Se aceptan modificaciones sin costo extra",
@@ -74,16 +74,19 @@ interface OnboardingContextProps {
 
 const OnboardingContext = createContext<OnboardingContextProps | undefined>(undefined);
 
-export function OnboardingProvider({ children }: { children: ReactNode }) {
-  const [data, setData] = useState<OnboardingData>(defaultData);
-  const [currentStep, setCurrentStep] = useState(0); 
+export function OnboardingProvider({ children, initialStep = 0, initialEmail = "" }: { children: ReactNode, initialStep?: number, initialEmail?: string }) {
+  const [data, setData] = useState<OnboardingData>({
+    ...defaultData,
+    email: initialEmail || defaultData.email
+  });
+  const [currentStep, setCurrentStep] = useState(initialStep); 
   const [isProcessing, setIsProcessing] = useState(false);
 
   const updateData = (fields: Partial<OnboardingData>) => {
     setData((prev) => ({ ...prev, ...fields }));
   };
 
-  const nextStep = () => setCurrentStep((prev) => Math.min(prev + 1, 6));
+  const nextStep = () => setCurrentStep((prev) => Math.min(prev + 1, 7));
   const prevStep = () => setCurrentStep((prev) => Math.max(prev - 1, 0));
   const setStep = (step: number) => setCurrentStep(step);
 

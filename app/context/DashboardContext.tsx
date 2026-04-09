@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 
 export interface Restaurant {
@@ -73,24 +73,46 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
   const [whatsappConfig, setWhatsappConfig] = useState<WhatsAppConfig | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  const supabaseBrowser = createClient();
+
   const fetchDashboardData = async () => {
     setIsLoading(true);
     try {
-      const restaurantId = localStorage.getItem("directo_restaurant_id");
-      if (!restaurantId) {
-        router.push("/");
+      const { data: { user } } = await supabaseBrowser.auth.getUser();
+      
+      if (!user) {
+        router.push("/login");
         return;
       }
 
-      const [restRes, agentRes, menuRes, ordersRes, waRes] = await Promise.all([
-        supabase.from("restaurants").select("*").eq("id", restaurantId).single(),
-        supabase.from("agent_config").select("*").eq("restaurant_id", restaurantId).single(),
-        supabase.from("menu_items").select("*").eq("restaurant_id", restaurantId).order("sort_order"),
-        supabase.from("orders").select("*").eq("restaurant_id", restaurantId).order("created_at", { ascending: false }),
-        supabase.from("whatsapp_config").select("*").eq("restaurant_id", restaurantId).maybeSingle()
+      let restRes = await supabaseBrowser.from("restaurants").select("*").eq("user_id", user.id).maybeSingle();
+      
+      if (!restRes.data && user.email) {
+        // Fallback: try by email if user_id is not set yet
+        restRes = await supabaseBrowser.from("restaurants").select("*").eq("email", user.email).maybeSingle();
+        
+        // If found by email, update it with the user_id for future faster lookups
+        if (restRes.data) {
+          await supabaseBrowser.from("restaurants").update({ user_id: user.id }).eq("id", restRes.data.id);
+        }
+      }
+
+      if (!restRes.data) {
+         // User truly has no restaurant or different email, redirect to onboarding 
+         router.push("/onboarding");
+         return;
+      }
+
+      const restaurantId = restRes.data.id;
+
+      const [agentRes, menuRes, ordersRes, waRes] = await Promise.all([
+        supabaseBrowser.from("agent_config").select("*").eq("restaurant_id", restaurantId).single(),
+        supabaseBrowser.from("menu_items").select("*").eq("restaurant_id", restaurantId).order("sort_order"),
+        supabaseBrowser.from("orders").select("*").eq("restaurant_id", restaurantId).order("created_at", { ascending: false }),
+        supabaseBrowser.from("whatsapp_config").select("*").eq("restaurant_id", restaurantId).maybeSingle()
       ]);
 
-      if (restRes.data) setRestaurant(restRes.data);
+      setRestaurant(restRes.data);
       if (agentRes.data) setAgentConfig(agentRes.data);
       if (menuRes.data) setMenu(menuRes.data);
       if (ordersRes.data) setOrders(ordersRes.data);
@@ -106,36 +128,60 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
     fetchDashboardData();
   }, []);
 
+  const syncWithGHL = async (prompt: string, info: any) => {
+    if (!restaurant) return;
+    try {
+      await fetch('/api/webhooks/ghl/sync-prompt', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          restaurant_id: restaurant.id,
+          ghl_location_id: (restaurant as any).ghl_location_id,
+          system_prompt: prompt,
+          dynamic_info: info
+        })
+      });
+    } catch (error) {
+      console.error("Failed to sync prompt to GHL", error);
+    }
+  };
+
   const updateAgentStatus = async (isActive: boolean) => {
     if (!agentConfig) return;
-    const { error } = await supabase.from("agent_config").update({ is_active: isActive }).eq("id", agentConfig.id);
+    const { error } = await supabaseBrowser.from("agent_config").update({ is_active: isActive }).eq("id", agentConfig.id);
     if (!error) setAgentConfig({ ...agentConfig, is_active: isActive });
   };
 
   const updateDynamicInfo = async (info: any) => {
     if (!agentConfig) return;
-    const { error } = await supabase.from("agent_config").update({ dynamic_info: info }).eq("id", agentConfig.id);
-    if (!error) setAgentConfig({ ...agentConfig, dynamic_info: info });
+    const { error } = await supabaseBrowser.from("agent_config").update({ dynamic_info: info }).eq("id", agentConfig.id);
+    if (!error) {
+      setAgentConfig({ ...agentConfig, dynamic_info: info });
+      await syncWithGHL(agentConfig.system_prompt, info);
+    }
   };
 
   const updatePrompt = async (newPrompt: string, reason = "edit") => {
     if (!agentConfig || !restaurant) return;
     
     // Update config
-    await supabase.from("agent_config").update({ system_prompt: newPrompt }).eq("id", agentConfig.id);
+    await supabaseBrowser.from("agent_config").update({ system_prompt: newPrompt }).eq("id", agentConfig.id);
     setAgentConfig({ ...agentConfig, system_prompt: newPrompt });
     
     // Create history
-    await supabase.from("prompt_history").insert({
+    await supabaseBrowser.from("prompt_history").insert({
       restaurant_id: restaurant.id,
       prompt_text: newPrompt,
+      dynamic_info: agentConfig.dynamic_info,
       source: reason
     });
+
+    await syncWithGHL(newPrompt, agentConfig.dynamic_info);
   };
 
-  const logout = () => {
-    localStorage.removeItem("directo_restaurant_id");
-    router.push("/");
+  const logout = async () => {
+    await supabaseBrowser.auth.signOut();
+    router.push("/login"); // or root
   };
 
   return (

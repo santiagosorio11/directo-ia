@@ -17,7 +17,7 @@ export function PersonalityStep() {
 
   return (
     <div className="flex flex-col h-full gap-8 max-w-2xl mx-auto py-12 pt-16 font-sans">
-      <ProgressBar currentStep={3} totalSteps={5} />
+      <ProgressBar currentStep={5} totalSteps={7} />
       
       <motion.div 
         initial={{ opacity: 0, y: 15 }} 
@@ -29,44 +29,73 @@ export function PersonalityStep() {
           <Sparkles className="w-8 h-8 fill-current" />
         </div>
         <div className="flex flex-col gap-2">
-           <h2 className="text-3xl md:text-3xl font-extrabold text-foreground tracking-tight leading-tight font-heading uppercase">Personalidad</h2>
-           <p className="text-lg text-foreground/50 max-w-md mx-auto font-medium">Define cómo quieres que tu asesor interactúe con los clientes.</p>
+           <h2 className="text-3xl md:text-3xl font-extrabold text-foreground tracking-tight leading-tight font-heading uppercase">Mi Personalidad</h2>
+           <p className="text-lg text-foreground/50 max-w-md mx-auto font-medium">Dime cómo quieres que me llame, cómo debo saludar y cuál será mi tono de voz al vender.</p>
         </div>
       </motion.div>
 
       <div className="flex flex-col gap-8 mt-6 bg-card border border-white/5 p-8 rounded-[36px] shadow-sm">
-        <label className="text-[11px] font-bold text-foreground/40 uppercase tracking-widest px-1">Escoge tu Tono de Voz</label>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {tones.map((t) => {
-            const isSelected = data.tone === t.id;
-            const Icon = t.icon;
-            return (
-              <button
-                key={t.id}
-                onClick={() => updateData({ tone: t.id })}
-                className={`flex flex-col gap-3 p-8 rounded-[32px] border transition-all text-left group ${
-                  isSelected 
-                    ? "border-primary bg-primary/5 shadow-md ring-1 ring-primary/20" 
-                    : "border-white/5 hover:border-primary/20 hover:bg-white/[0.01]"
-                }`}
-              >
-                <div className="flex justify-between items-center w-full">
-                  <div className={`p-2 rounded-xl transition-colors ${isSelected ? "text-primary" : "text-foreground/20 group-hover:text-foreground/40"}`}>
-                    <Icon className="w-6 h-6" />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-3">
+            <label className="text-[11px] font-bold text-foreground/40 uppercase tracking-widest px-1">Mi Nombre</label>
+            <div className="relative">
+              <Bot className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-primary/50" />
+              <input 
+                type="text" 
+                value={data.agentName}
+                onChange={(e) => updateData({ agentName: e.target.value })}
+                placeholder="Ej. Asesor Mao"
+                className="w-full bg-white/5 border-none px-14 py-4 rounded-[20px] text-lg font-bold focus:ring-4 focus:ring-primary/10 outline-none transition-all placeholder:text-white/20"
+              />
+            </div>
+          </div>
+          
+          <div className="space-y-3">
+            <label className="text-[11px] font-bold text-foreground/40 uppercase tracking-widest px-1">¿Cómo saludo al cliente?</label>
+            <input 
+              type="text" 
+              value={data.greeting}
+              onChange={(e) => updateData({ greeting: e.target.value })}
+              placeholder="Ej. ¡Hola! Soy Mao, ¿qué te sirvo hoy?"
+              className="w-full bg-white/5 border-none px-6 py-4 rounded-[20px] text-lg font-bold focus:ring-4 focus:ring-primary/10 outline-none transition-all placeholder:text-white/20"
+            />
+          </div>
+        </div>
+
+        <div className="border-t border-white/5 pt-6 mt-2">
+          <label className="text-[11px] font-bold text-foreground/40 uppercase tracking-widest px-1 mb-4 block">Mi Tono de Voz</label>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {tones.map((t) => {
+              const isSelected = data.tone === t.id;
+              const Icon = t.icon;
+              return (
+                <button
+                  key={t.id}
+                  onClick={() => updateData({ tone: t.id })}
+                  className={`flex flex-col gap-3 p-6 rounded-[28px] border transition-all text-left group ${
+                    isSelected 
+                      ? "border-primary bg-primary/5 shadow-md ring-1 ring-primary/20" 
+                      : "border-white/5 hover:border-primary/20 hover:bg-white/[0.01]"
+                  }`}
+                >
+                  <div className="flex justify-between items-center w-full">
+                    <div className={`p-2 rounded-xl transition-colors ${isSelected ? "text-primary" : "text-foreground/20 group-hover:text-foreground/40"}`}>
+                      <Icon className="w-5 h-5" />
+                    </div>
+                    {isSelected && <Check className="w-5 h-5 text-primary" />}
                   </div>
-                  {isSelected && <Check className="w-6 h-6 text-primary" />}
-                </div>
-                <div className="flex flex-col gap-1">
-                  <span className={`text-lg font-bold ${isSelected ? "text-primary" : "text-foreground/60 group-hover:text-foreground/80"}`}>
-                    {t.id}
-                  </span>
-                  <p className="text-xs text-foreground/40 font-medium leading-relaxed">
-                    {t.desc}
-                  </p>
-                </div>
-              </button>
-            );
-          })}
+                  <div className="flex flex-col gap-1">
+                    <span className={`text-md font-bold ${isSelected ? "text-primary" : "text-foreground/60 group-hover:text-foreground/80"}`}>
+                      {t.id}
+                    </span>
+                    <p className="text-xs text-foreground/40 font-medium leading-relaxed">
+                      {t.desc}
+                    </p>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
 

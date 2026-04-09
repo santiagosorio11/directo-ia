@@ -71,7 +71,7 @@ export default function AgentSection() {
         {/* Info Dinámica (Contexto situacional temporal) */}
         <div className="bg-[#18181B] border border-white/5 p-8 rounded-[32px] flex flex-col gap-6">
           <div className="flex items-center gap-3">
-            <Info className="w-6 h-6 text-[#FF5200]" />
+            <Info className="w-6 h-6 text-[#C92A5E]" />
             <h3 className="text-xl font-heading font-bold text-white">Información Dinámica</h3>
           </div>
           <p className="text-white/40 text-sm">Avisa al agente sobre demoras, lluvia, o si cerraron temprano. Se enviará junto al prompt siempre.</p>
@@ -79,7 +79,7 @@ export default function AgentSection() {
             value={dynamicNotes}
             onChange={(e) => setDynamicNotes(e.target.value)}
             placeholder="Ej: Lluvia fuerte, tiempo de entrega aumentó 20 min. Ya no queda postre de chocolate."
-            className="w-full bg-[#09090B] border border-white/10 rounded-2xl p-4 text-sm resize-none h-32 focus:ring-2 focus:ring-[#FF5200]/50 outline-none placeholder:text-white/20 text-white/80"
+            className="w-full bg-[#09090B] border border-white/10 rounded-2xl p-4 text-sm resize-none h-32 focus:ring-2 focus:ring-[#C92A5E]/50 outline-none placeholder:text-white/20 text-white/80"
           ></textarea>
           <button 
             onClick={handleSaveDynamicInfo}
@@ -92,7 +92,7 @@ export default function AgentSection() {
         {/* Entrenamiento / Mejoras */}
         <div className="bg-[#18181B] border border-white/5 p-8 rounded-[32px] flex flex-col gap-6">
           <div className="flex items-center gap-3">
-            <Bot className="w-6 h-6 text-[#FF5200]" />
+            <Bot className="w-6 h-6 text-[#C92A5E]" />
             <h3 className="text-xl font-heading font-bold text-white">Entrenar Agente</h3>
           </div>
           <p className="text-white/40 text-sm">¿Notas algo que responde mal? Dímelo en audio o texto y ajustaré su prompt.</p>
@@ -101,7 +101,7 @@ export default function AgentSection() {
               value={trainingNotes}
               onChange={(e) => setTrainingNotes(e.target.value)}
               placeholder="Ej: Cuando pregunten por cubiertos diles que cobramos extra..."
-              className="w-full bg-[#09090B] border border-white/10 rounded-2xl p-4 pr-16 text-sm resize-none h-32 focus:ring-2 focus:ring-[#FF5200]/50 outline-none placeholder:text-white/20 text-white/80"
+              className="w-full bg-[#09090B] border border-white/10 rounded-2xl p-4 pr-16 text-sm resize-none h-32 focus:ring-2 focus:ring-[#C92A5E]/50 outline-none placeholder:text-white/20 text-white/80"
             ></textarea>
             <button
               onClick={startVoiceRecording}
@@ -135,7 +135,7 @@ export default function AgentSection() {
           </div>
           <button 
             onClick={handleSavePrompt}
-            className="flex items-center gap-2 px-6 py-3 bg-[#FF5200] hover:bg-[#ff6a2b] transition-all rounded-full font-bold text-sm"
+            className="flex items-center gap-2 px-6 py-3 bg-[#C92A5E] hover:bg-[#A01F48] transition-all rounded-full font-bold text-sm"
           >
             <Save className="w-4 h-4" /> Guardar
           </button>
@@ -144,7 +144,7 @@ export default function AgentSection() {
         <textarea
           value={promptText}
           onChange={(e) => setPromptText(e.target.value)}
-          className="w-full bg-[#09090B] border border-white/10 rounded-2xl p-6 text-sm resize-none h-96 focus:ring-1 focus:ring-[#FF5200] outline-none text-green-400 font-mono leading-relaxed"
+          className="w-full bg-[#09090B] border border-white/10 rounded-2xl p-6 text-sm resize-none h-96 focus:ring-1 focus:ring-[#C92A5E] outline-none text-green-400 font-mono leading-relaxed"
         ></textarea>
       </div>
     </div>
