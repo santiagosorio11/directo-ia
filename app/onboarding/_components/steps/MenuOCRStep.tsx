@@ -18,6 +18,63 @@ interface Product {
   variants?: Variant[];
 }
 
+const compressImage = (file: File): Promise<File> => {
+  return new Promise((resolve) => {
+    if (!file.type.startsWith('image/')) {
+      resolve(file);
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target?.result as string;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let width = img.width;
+        let height = img.height;
+        const MAX_SIZE = 1600;
+
+        if (width > height) {
+          if (width > MAX_SIZE) {
+            height *= MAX_SIZE / width;
+            width = MAX_SIZE;
+          }
+        } else {
+          if (height > MAX_SIZE) {
+            width *= MAX_SIZE / height;
+            height = MAX_SIZE;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx?.drawImage(img, 0, 0, width, height);
+
+        canvas.toBlob(
+          (blob) => {
+            if (blob) {
+              const compressedFile = new File([blob], file.name.replace(/\.[^/.]+$/, "") + ".jpg", {
+                type: 'image/jpeg',
+                lastModified: Date.now(),
+              });
+              resolve(compressedFile);
+            } else {
+              resolve(file);
+            }
+          },
+          'image/jpeg',
+          0.7 // 70% quality for better compression
+        );
+      };
+      img.onerror = () => resolve(file);
+    };
+    reader.onerror = () => resolve(file);
+  });
+};
+
 const processingSteps = [
   { text: "Analizando archivo", emoji: "🧐" },
   { text: "Detectando platos", emoji: "🍽️" },
@@ -109,8 +166,20 @@ export function MenuOCRStep() {
       for (let i = 0; i < updatedFiles.length; i++) {
         if (updatedFiles[i].processed) continue;
 
+        let fileToUpload = updatedFiles[i].file;
+
+        // Compress if it's an image
+        if (fileToUpload.type.startsWith('image/')) {
+          fileToUpload = await compressImage(fileToUpload);
+        }
+
+        // Check if file is still too large (Next.js/Vercel limit 4.5MB)
+        if (fileToUpload.size > 4.5 * 1024 * 1024) {
+          throw new Error(`El archivo ${fileToUpload.name} es demasiado grande. Por favor sube uno menor a 4MB.`);
+        }
+
         const formData = new FormData();
-        formData.append('file', updatedFiles[i].file);
+        formData.append('file', fileToUpload);
         
         const response = await fetch("/api/ocr", {
           method: "POST",
@@ -136,6 +205,9 @@ export function MenuOCRStep() {
 
           allNewProducts = [...allNewProducts, ...products];
           updatedFiles[i] = { ...updatedFiles[i], processed: true };
+        } else {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.error || "Error al procesar el menú");
         }
       }
 
@@ -319,6 +391,17 @@ export function MenuOCRStep() {
                 )}
               </AnimatePresence>
             </div>
+
+            {error && (
+              <motion.div 
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="p-4 bg-red-50 border border-red-100 rounded-2xl flex items-center gap-3 text-red-600 font-bold text-sm"
+              >
+                <AlertCircle className="w-5 h-5 flex-shrink-0" />
+                {error}
+              </motion.div>
+            )}
 
             {/* Extracted Items Section */}
             <div className="flex flex-col gap-6 mt-4 pb-12">
