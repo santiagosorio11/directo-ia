@@ -18,10 +18,25 @@ export async function POST(req: NextRequest) {
     
     // Normalizamos la respuesta de n8n para ser más robustos en producción
     let masterPrompt = null;
-    if (Array.isArray(response)) {
-      masterPrompt = response[0]?.generatedPrompt || response[0]?.prompt || response[0]?.system_prompt || response[0];
-    } else {
-      masterPrompt = response?.generatedPrompt || response?.prompt || response?.system_prompt || response;
+    const item = Array.isArray(response) ? response[0] : response;
+    
+    // Lista de posibles llaves donde n8n entrega el prompt
+    masterPrompt = item?.generatedPrompt || 
+                   item?.prompt || 
+                   item?.system_prompt || 
+                   item?.text || 
+                   (typeof item === 'string' ? item : null);
+
+    // Limpieza de bloques de código markdown si existen
+    if (masterPrompt && typeof masterPrompt === "string") {
+      masterPrompt = masterPrompt.trim();
+      // Si empieza con ``` y termina con ``` lo limpiamos
+      if (masterPrompt.startsWith("```")) {
+        masterPrompt = masterPrompt
+          .replace(/^```[\w]*\n?/, "")
+          .replace(/\n?```$/, "")
+          .trim();
+      }
     }
 
     if (!masterPrompt || typeof masterPrompt !== "string") {

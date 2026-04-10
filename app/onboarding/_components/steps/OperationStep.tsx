@@ -90,6 +90,11 @@ export function OperationStep() {
               transition={{ duration: 0.8 }}
               className="flex flex-col items-center"
             >
+              <img 
+                src="/vendedoria4.png" 
+                alt="Operation Rules Icon" 
+                className="h-40 w-auto mb-2 object-contain"
+              />
               <h2 className="text-4xl font-black font-heading text-foreground tracking-tight leading-tight text-center">
                 Mis reglas de operación
               </h2>
