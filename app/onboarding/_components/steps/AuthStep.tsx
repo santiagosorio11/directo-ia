@@ -133,21 +133,23 @@ export function AuthStep() {
   };
 
   return (
-    <div className="flex flex-col gap-10 max-w-md mx-auto py-10">
+    <div className="flex flex-col gap-6 max-w-md mx-auto py-0">
       {/* Header Section */}
       <motion.div 
         initial={{ opacity: 0, x: -20 }} 
         animate={{ opacity: 1, x: 0 }} 
-        className="space-y-2"
+        className="flex flex-col items-center"
       >
-        <h1 className="text-4xl font-black font-heading text-foreground tracking-tight">
+        <h2 className="text-4xl font-black font-heading text-foreground tracking-tight text-center">
           {isLogin ? "Bienvenido" : "Crea tu cuenta"}
-        </h1>
-        <p className="text-foreground/50 text-base font-medium leading-relaxed">
-          {isLogin 
-            ? "Nos alegra verte de nuevo. Entra a tu cocina digital."
-            : "Inicia sesión o regístrate para comenzar la configuración de tu agente IA."}
-        </p>
+        </h2>
+        <div className="w-full">
+          <p className="text-foreground/50 text-base font-medium leading-relaxed mt-4 text-left">
+            {isLogin 
+              ? "Nos alegra verte de nuevo. Entra a tu cocina digital."
+              : "Inicia sesión o regístrate para comenzar la configuración de tu agente IA."}
+          </p>
+        </div>
       </motion.div>
 
       {/* Form Section */}

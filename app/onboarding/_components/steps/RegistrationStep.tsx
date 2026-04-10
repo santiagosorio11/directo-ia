@@ -17,19 +17,26 @@ export function RegistrationStep() {
   const isValid = data.businessName && data.phone && data.address;
 
   return (
-    <div className="flex flex-col gap-8 max-w-2xl mx-auto font-sans text-foreground py-4">
+    <div className="flex flex-col gap-6 max-w-2xl mx-auto font-sans text-foreground py-0">
       <motion.div 
         initial={{ opacity: 0, x: -20 }} 
         animate={{ opacity: 1, x: 0 }} 
         transition={{ duration: 0.8 }}
-        className="flex flex-col gap-2"
+        className="flex flex-col items-center"
       >
-        <h2 className="text-4xl font-black font-heading text-foreground tracking-tight leading-tight">
+        <img 
+          src="/vendedoria.png" 
+          alt="Vendor Icon" 
+          className="h-40 w-auto mb-2 object-contain"
+        />
+        <h2 className="text-4xl font-black font-heading text-foreground tracking-tight leading-tight text-center">
           Hola! Soy tu vendedor virtual de Directo
         </h2>
-        <p className="text-base text-foreground/50 font-medium leading-relaxed">
-          Necesito conocer tu restaurante para empezar a vender sin apps ni comisiones.
-        </p>
+        <div className="w-full">
+          <p className="text-base text-foreground/50 font-medium leading-relaxed mt-4 text-left">
+            Necesito conocer tu restaurante para empezar a vender sin apps ni comisiones.
+          </p>
+        </div>
       </motion.div>
 
       <div className="flex flex-col gap-8 mt-6">

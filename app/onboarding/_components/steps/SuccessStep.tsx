@@ -192,6 +192,14 @@ export function SuccessStep() {
              <p className="text-md text-slate-500 font-medium">Conecta este asesor con tu WhatsApp y empieza a vender en automático.</p>
            </div>
            
+           <button 
+             onClick={handleActivate}
+             disabled={isActivating}
+             className="w-full flex items-center justify-center gap-3 py-5 bg-primary text-white rounded-2xl font-black text-lg shadow-xl shadow-primary/30 active:scale-95 transition-all disabled:opacity-50"
+           >
+             <Zap className="w-6 h-6" /> Ir al Dashboard
+           </button>
+
            <p className="text-[10px] text-slate-400 uppercase tracking-widest font-black">Sin contratos · Cancela cuando quieras</p>
         </div>
 

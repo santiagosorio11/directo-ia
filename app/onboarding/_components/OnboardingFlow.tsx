@@ -6,7 +6,6 @@ import { AuthStep } from "./steps/AuthStep";
 import { RegistrationStep } from "./steps/RegistrationStep";
 import { IdentityStep } from "./steps/IdentityStep";
 import { MenuOCRStep } from "./steps/MenuOCRStep";
-import { StrategyStep } from "./steps/StrategyStep";
 import { PersonalityStep } from "./steps/PersonalityStep";
 import { OperationStep } from "./steps/OperationStep";
 import { SuccessStep } from "./steps/SuccessStep";
@@ -44,16 +43,18 @@ export function OnboardingFlow() {
     setPrevStepIdx(currentStep);
   }, [currentStep, prevStepIdx]);
 
-  const showBackButton = currentStep > 0 && currentStep < 7;
-  const showContinueButton = currentStep < 7;
-  const continueText = currentStep === 6 ? "Activar mi Agente IA" : "Continuar";
+  const showBackButton = currentStep > 0 && currentStep < 6;
+  const showContinueButton = currentStep < 6;
+  const continueText = currentStep === 5 ? "Activar mi Agente IA" : "Continuar";
 
   return (
     <div className="flex-1 w-full bg-background relative flex flex-col items-center min-h-screen font-sans">
       
-      {/* Container Fijo para Progreso */}
-      <div className="w-full max-w-4xl px-4 md:px-6 mt-4 md:mt-6 z-20">
-        <ProgressBar currentStep={currentStep} totalSteps={7} />
+
+      <div className="w-full max-w-4xl px-4 md:px-6 pt-4">
+        {currentStep > 0 && currentStep < 6 && (
+          <ProgressBar currentStep={currentStep - 1} totalSteps={5} />
+        )}
       </div>
 
       <AnimatePresence mode="wait" custom={direction}>
@@ -70,15 +71,14 @@ export function OnboardingFlow() {
           }}
           className="w-full h-full flex flex-col items-center flex-1"
         >
-          <div className="w-full max-w-4xl px-4 md:px-6 pb-32 pt-4">
+          <div className="w-full max-w-4xl px-4 md:px-6 pb-32 pt-0">
             {currentStep === 0 && <AuthStep />}
             {currentStep === 1 && <RegistrationStep />}
             {currentStep === 2 && <IdentityStep />}
             {currentStep === 3 && <MenuOCRStep />}
-            {currentStep === 4 && <StrategyStep />}
-            {currentStep === 5 && <PersonalityStep />}
-            {currentStep === 6 && <OperationStep />}
-            {currentStep === 7 && <SuccessStep />}
+            {currentStep === 4 && <PersonalityStep />}
+            {currentStep === 5 && <OperationStep />}
+            {currentStep === 6 && <SuccessStep />}
           </div>
         </motion.div>
       </AnimatePresence>

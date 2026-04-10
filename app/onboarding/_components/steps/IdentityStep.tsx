@@ -66,19 +66,26 @@ export function IdentityStep() {
   };
 
   return (
-    <div className="flex flex-col gap-8 max-w-2xl mx-auto font-sans text-foreground py-4">
+    <div className="flex flex-col gap-6 max-w-2xl mx-auto font-sans text-foreground py-0">
       <motion.div 
         initial={{ opacity: 0, x: -20 }} 
         animate={{ opacity: 1, x: 0 }} 
         transition={{ duration: 0.8 }}
-        className="flex flex-col gap-2"
+        className="flex flex-col items-center"
       >
-        <h2 className="text-4xl font-black font-heading text-foreground tracking-tight leading-tight">
+        <img 
+          src="/vendedoria1.png" 
+          alt="Onboarding Icon" 
+          className="h-40 w-auto mb-2 object-contain"
+        />
+        <h2 className="text-4xl font-black font-heading text-foreground tracking-tight leading-tight text-center">
           Ahora voy a aprender a vender tu restaurante
         </h2>
-        <p className="text-base text-foreground/50 font-medium leading-relaxed">
-          Cuéntame qué hace único a tu negocio para que pueda representarte mejor.
-        </p>
+        <div className="w-full">
+          <p className="text-base text-foreground/50 font-medium leading-relaxed mt-4 text-left">
+            Cuéntame qué hace único a tu negocio para que pueda representarte mejor.
+          </p>
+        </div>
       </motion.div>
 
       <div className="flex flex-col gap-10 mt-6">

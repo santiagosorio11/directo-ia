@@ -15,15 +15,26 @@ export function PersonalityStep() {
   const { data, updateData, nextStep } = useOnboarding();
 
   return (
-    <div className="flex flex-col gap-8 mx-auto font-sans py-4 max-w-2xl text-foreground">
+    <div className="flex flex-col gap-6 mx-auto font-sans py-0 max-w-2xl text-foreground">
       <motion.div 
         initial={{ opacity: 0, x: -20 }} 
         animate={{ opacity: 1, x: 0 }} 
         transition={{ duration: 0.8 }}
-        className="flex flex-col gap-2"
+        className="flex flex-col items-center"
       >
-        <h2 className="text-4xl font-black font-heading text-foreground tracking-tight leading-tight">Mi personalidad</h2>
-        <p className="text-base text-foreground/50 font-medium leading-relaxed">Dime cómo quieres que me llame, cómo debo saludar y cuál será mi tono de voz al vender.</p>
+        <img 
+          src="/vendedoria3.png" 
+          alt="Personality Icon" 
+          className="h-40 w-auto mb-2 object-contain"
+        />
+        <h2 className="text-4xl font-black font-heading text-foreground tracking-tight leading-tight text-center">
+          Mi personalidad
+        </h2>
+        <div className="w-full">
+          <p className="text-base text-foreground/50 font-medium leading-relaxed mt-4 text-left">
+            Dime cómo quieres que me llame, cómo debo saludar y cuál será mi tono de voz al vender.
+          </p>
+        </div>
       </motion.div>
 
       <div className="flex flex-col gap-10 mt-6 font-sans">

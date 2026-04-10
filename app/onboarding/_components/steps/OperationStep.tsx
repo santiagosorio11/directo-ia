@@ -6,12 +6,12 @@ import { ArrowRight, ToggleRight, ToggleLeft, Bot, Zap, Check } from "lucide-rea
 import { useState, useEffect } from "react";
 
 const finalSteps = [
-  { text: "Aprendiendo tus horarios...", emoji: "⏰" },
-  { text: "Guardando datos de contacto...", emoji: "📝" },
-  { text: "Añadiendo el menú a mi memoria...", emoji: "🍽️" },
-  { text: "Entrenando mi cerebro de ventas...", emoji: "🧠" },
-  { text: "Configurando el canal de WhatsApp...", emoji: "📱" },
-  { text: "Casi listo para vender...", emoji: "🚀" },
+  { text: "Aprendiendo tus horarios", emoji: "⏰" },
+  { text: "Guardando datos de contacto", emoji: "📝" },
+  { text: "Añadiendo el menú a mi memoria", emoji: "🍽️" },
+  { text: "Entrenando mi cerebro de ventas", emoji: "🧠" },
+  { text: "Configurando el canal de WhatsApp", emoji: "📱" },
+  { text: "Casi listo para vender", emoji: "🚀" },
 ];
 
 export function OperationStep() {
@@ -74,7 +74,7 @@ export function OperationStep() {
   };
 
   return (
-    <div className="flex flex-col gap-8 mx-auto font-sans py-4 max-w-2xl">
+    <div className="flex flex-col gap-6 mx-auto font-sans py-0 max-w-2xl">
       <AnimatePresence mode="wait">
         {!isProcessing ? (
           <motion.div 
@@ -82,16 +82,22 @@ export function OperationStep() {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, scale: 1.05 }}
-            className="flex flex-col gap-8"
+            className="flex flex-col gap-6"
           >
             <motion.div 
               initial={{ opacity: 0, x: -20 }} 
               animate={{ opacity: 1, x: 0 }} 
               transition={{ duration: 0.8 }}
-              className="flex flex-col gap-2"
+              className="flex flex-col items-center"
             >
-              <h2 className="text-4xl font-black font-heading text-foreground tracking-tight leading-tight">Mis reglas de operación</h2>
-              <p className="text-base text-foreground/50 font-medium leading-relaxed">Enséñame cuáles son tus tiempos y medios de pago para poder cerrar los pedidos.</p>
+              <h2 className="text-4xl font-black font-heading text-foreground tracking-tight leading-tight text-center">
+                Mis reglas de operación
+              </h2>
+              <div className="w-full">
+                <p className="text-base text-foreground/50 font-medium leading-relaxed mt-4 text-left">
+                  Enséñame cuáles son tus tiempos y medios de pago para poder cerrar los pedidos.
+                </p>
+              </div>
             </motion.div>
 
             <div className="flex flex-col gap-10 mt-6 font-sans">
@@ -162,7 +168,7 @@ export function OperationStep() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="flex flex-col items-center justify-center py-20 gap-10 min-h-[500px]"
+            className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-background/95 backdrop-blur-md gap-10"
           >
             <div className="relative">
               <div className="w-48 h-48 border-4 border-primary/10 rounded-full animate-ping absolute inset-0" />

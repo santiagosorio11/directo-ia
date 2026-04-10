@@ -64,15 +64,26 @@ export function StrategyStep() {
   };
 
   return (
-    <div className="flex flex-col gap-8 mx-auto font-sans py-4 max-w-2xl">
+    <div className="flex flex-col gap-6 mx-auto font-sans py-0 max-w-2xl">
       <motion.div 
         initial={{ opacity: 0, x: -20 }} 
         animate={{ opacity: 1, x: 0 }} 
         transition={{ duration: 0.8 }}
-        className="flex flex-col gap-2"
+        className="flex flex-col items-center"
       >
-        <h2 className="text-4xl font-black font-heading text-foreground tracking-tight leading-tight">¿Qué objetivos tienes para mí?</h2>
-        <p className="text-base text-foreground/50 font-medium leading-relaxed">Dime cuál es tu estrategia y qué metas de venta debo perseguir.</p>
+        <img 
+          src="/vendedoria3.png" 
+          alt="Strategy Icon" 
+          className="h-40 w-auto mb-2 object-contain"
+        />
+        <h2 className="text-4xl font-black font-heading text-foreground tracking-tight leading-tight text-center">
+          ¿Qué objetivos tienes para mí?
+        </h2>
+        <div className="w-full">
+          <p className="text-base text-foreground/50 font-medium leading-relaxed mt-4 text-left">
+            Dime cuál es tu estrategia y qué metas de venta debo perseguir.
+          </p>
+        </div>
       </motion.div>
 
       <div className="flex flex-col gap-10 mt-6">
