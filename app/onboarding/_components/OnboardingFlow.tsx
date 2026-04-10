@@ -69,9 +69,9 @@ export function OnboardingFlow() {
             x: { type: "spring", stiffness: 300, damping: 32 },
             opacity: { duration: 0.2 },
           }}
-          className="w-full h-full flex flex-col items-center flex-1"
+          className={`w-full flex flex-col items-center flex-1 ${currentStep === 0 ? "justify-center" : ""}`}
         >
-          <div className="w-full max-w-4xl px-4 md:px-6 pb-32 pt-0">
+          <div className={`w-full max-w-4xl px-4 md:px-6 ${currentStep === 0 ? "py-0" : "pb-32 pt-0"}`}>
             {currentStep === 0 && <AuthStep />}
             {currentStep === 1 && <RegistrationStep />}
             {currentStep === 2 && <IdentityStep />}
