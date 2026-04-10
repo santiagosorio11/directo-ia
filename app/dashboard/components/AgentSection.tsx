@@ -1,15 +1,23 @@
 "use client";
 
 import { useDashboard } from "@/app/dashboard/_context/DashboardContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Bot, Save, Mic, Info, Power, AlertTriangle } from "lucide-react";
 
 export default function AgentSection() {
-  const { agentConfig, updateAgentStatus, updateDynamicInfo, updatePrompt } = useDashboard();
+  const { agentConfig, updateAgentStatus, updateDynamicInfo, updatePrompt, improvePrompt } = useDashboard();
   const [dynamicNotes, setDynamicNotes] = useState(agentConfig?.dynamic_info?.notes || "");
   const [promptText, setPromptText] = useState(agentConfig?.system_prompt || "");
   const [trainingNotes, setTrainingNotes] = useState("");
   const [isRecording, setIsRecording] = useState(false);
+  const [isTraining, setIsTraining] = useState(false);
+
+  useEffect(() => {
+    if (agentConfig) {
+      setPromptText(agentConfig.system_prompt);
+      setDynamicNotes(agentConfig.dynamic_info?.notes || "");
+    }
+  }, [agentConfig]);
 
   const handleSaveDynamicInfo = async () => {
     await updateDynamicInfo({ ...agentConfig?.dynamic_info, notes: dynamicNotes });
@@ -19,6 +27,20 @@ export default function AgentSection() {
   const handleSavePrompt = async () => {
     await updatePrompt(promptText, "edit");
     alert("Prompt guardado y actualizado con éxito.");
+  };
+
+  const handleTrainAgent = async () => {
+    if (!trainingNotes.trim()) return;
+    setIsTraining(true);
+    try {
+      await improvePrompt(trainingNotes);
+      setTrainingNotes("");
+      alert("¡Instrucción procesada! Orbita IA ha ajustado el cerebro de tu agente.");
+    } catch (error) {
+      alert("No se pudo completar el entrenamiento. Intenta de nuevo.");
+    } finally {
+      setIsTraining(false);
+    }
   };
 
   const startVoiceRecording = () => {
@@ -111,13 +133,11 @@ export default function AgentSection() {
             </button>
           </div>
           <button 
-            onClick={() => {
-              alert("Instrucción enviada a Orbita IA para mejorar el prompt.");
-              setTrainingNotes("");
-            }}
-            className="w-full py-3 sm:py-4 bg-primary text-white rounded-full font-bold text-sm transition-all shadow-lg shadow-primary/20 hover:scale-[1.02]"
+            onClick={handleTrainAgent}
+            disabled={isTraining || !trainingNotes.trim()}
+            className="w-full py-3 sm:py-4 bg-primary text-white rounded-full font-bold text-sm transition-all shadow-lg shadow-primary/20 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Enviar Instrucción
+            {isTraining ? "Procesando..." : "Enviar Instrucción"}
           </button>
         </div>
       </div>

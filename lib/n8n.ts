@@ -1,19 +1,12 @@
-const N8N_PROMPT_GEN_URL = process.env.N8N_PROMPT_GEN_URL;
-const N8N_MASTER_AGENT_URL = process.env.N8N_MASTER_AGENT_URL;
-
-if (!N8N_PROMPT_GEN_URL) {
-  console.warn("⚠️ N8N_PROMPT_GEN_URL no está definida en las variables de entorno.");
-}
-if (!N8N_MASTER_AGENT_URL) {
-  console.warn("⚠️ N8N_MASTER_AGENT_URL no está definida en las variables de entorno.");
-}
-
 /**
  * Genera el System Prompt maestro del agente enviando toda la data
  * del restaurante a un flujo de n8n especializado.
  */
 export async function generateMasterPrompt(restaurantData: any) {
+  const N8N_PROMPT_GEN_URL = process.env.N8N_PROMPT_GEN_URL;
+  
   if (!N8N_PROMPT_GEN_URL) {
+    console.warn("⚠️ N8N_PROMPT_GEN_URL no está definida en las variables de entorno.");
     throw new Error("N8N_PROMPT_GEN_URL no está configurada.");
   }
 
@@ -38,7 +31,10 @@ export async function callMasterAgent(payload: {
   message: string;
   sessionId: string;
 }) {
+  const N8N_MASTER_AGENT_URL = process.env.N8N_MASTER_AGENT_URL;
+
   if (!N8N_MASTER_AGENT_URL) {
+    console.warn("⚠️ N8N_MASTER_AGENT_URL no está definida en las variables de entorno.");
     throw new Error("N8N_MASTER_AGENT_URL no está configurada.");
   }
 

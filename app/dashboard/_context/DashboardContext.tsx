@@ -58,6 +58,7 @@ interface DashboardContextProps {
   updateAgentStatus: (isActive: boolean) => Promise<void>;
   updateDynamicInfo: (info: any) => Promise<void>;
   updatePrompt: (newPrompt: string, reason?: string) => Promise<void>;
+  improvePrompt: (notes: string) => Promise<void>;
   logout: () => void;
   isLoading: boolean;
 }
@@ -179,6 +180,37 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
     await syncWithGHL(newPrompt, agentConfig.dynamic_info);
   };
 
+  const improvePrompt = async (notes: string) => {
+    if (!agentConfig || !restaurant) return;
+    
+    setIsLoading(true);
+    try {
+      const res = await fetch("/api/generate-prompt", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...restaurant,
+          currentPrompt: agentConfig.system_prompt,
+          trainingNotes: notes,
+          menu: menu, // Include menu for context
+        }),
+      });
+      
+      const result = await res.json();
+      
+      if (result.generatedPrompt) {
+        await updatePrompt(result.generatedPrompt, "training_improvement");
+      } else {
+        throw new Error(result.error || "No se pudo mejorar el prompt.");
+      }
+    } catch (error) {
+      console.error("Improve Prompt Error:", error);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const logout = async () => {
     await supabaseBrowser.auth.signOut();
     router.push("/login"); // or root
@@ -195,6 +227,7 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
       updateAgentStatus,
       updateDynamicInfo,
       updatePrompt,
+      improvePrompt,
       logout,
       isLoading
     }}>
