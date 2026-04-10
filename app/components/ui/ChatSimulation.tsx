@@ -42,16 +42,16 @@ export function ChatSimulation() {
   }, []);
 
   return (
-    <div className="w-full h-full flex flex-col">
-      <div className="flex items-center gap-3 pb-4 mb-4 border-b border-black/5 dark:border-white/5">
+    <div className="w-full h-full flex flex-col font-sans">
+      <div className="flex items-center gap-3 pb-4 mb-4 border-b border-black/5">
         <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white shadow-lg shadow-primary/20">
           <Bot className="w-5 h-5" />
         </div>
         <div className="flex flex-col">
-          <span className="text-black dark:text-white text-sm font-bold tracking-tight">IA Directo</span>
+          <span className="text-foreground text-sm font-black tracking-tight uppercase italic">IA Directo</span>
           <div className="flex items-center gap-1.5">
             <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
-            <span className="text-green-500 text-[10px] uppercase font-bold tracking-widest">Activo</span>
+            <span className="text-green-500 text-[10px] uppercase font-black tracking-widest italic">Activo</span>
           </div>
         </div>
       </div>
@@ -72,12 +72,12 @@ export function ChatSimulation() {
                 transition={{ type: "spring", stiffness: 200, damping: 20 }}
                 className={`flex gap-2 ${isBot ? "flex-row" : "flex-row-reverse"} items-end`}
               >
-                <div className={`flex flex-col max-w-[80%] ${isBot ? "items-start" : "items-end"}`}>
+                <div className={`flex flex-col max-w-[85%] ${isBot ? "items-start" : "items-end"}`}>
                   <div 
-                    className={`px-4 py-3 rounded-[24px] text-sm leading-relaxed shadow-sm ${
+                    className={`px-4 py-3 rounded-[20px] text-sm leading-relaxed shadow-sm ${
                       isBot 
-                        ? "bg-[#F2F2F7] dark:bg-[#2C2C2E] text-black dark:text-white rounded-bl-none border border-black/5 dark:border-white/5 whitespace-pre-wrap" 
-                        : "bg-primary text-white rounded-br-none"
+                        ? "bg-white text-foreground/80 rounded-bl-none border border-black/5 whitespace-pre-wrap font-bold" 
+                        : "bg-primary text-white rounded-br-none font-bold"
                     }`}
                   >
                     {msg.text}
@@ -89,9 +89,9 @@ export function ChatSimulation() {
         </AnimatePresence>
       </div>
       
-      <div className="pt-4 border-t border-black/5 dark:border-white/5 mt-auto">
-        <div className="w-full h-10 bg-[#F2F2F7] dark:bg-[#2C2C2E] rounded-full border border-black/5 dark:border-white/5 flex items-center px-4">
-          <span className="text-black/20 dark:text-white/20 text-xs font-bold uppercase tracking-wider">Simulación en curso...</span>
+      <div className="pt-4 border-t border-black/5 mt-auto">
+        <div className="w-full h-10 bg-[#EEF2F6] rounded-full border border-black/5 flex items-center px-4">
+          <span className="text-foreground/20 text-[10px] font-black uppercase tracking-widest italic">Simulación en curso...</span>
         </div>
       </div>
     </div>

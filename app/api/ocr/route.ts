@@ -13,7 +13,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "No se ha proporcionado ningún archivo" }, { status: 400 });
     }
 
-    const ocrUrl = process.env.N8N_OCR_MENU_URL || "https://n8n.iaorbita.com/webhook/9399f248-cdce-4526-9b92-76bb2a038322";
+    const ocrUrl = process.env.N8N_OCR_MENU_URL;
+
+    if (!ocrUrl) {
+      return NextResponse.json({ error: "N8N_OCR_MENU_URL no está configurada" }, { status: 500 });
+    }
 
     console.log(`Proxificando OCR a n8n: ${ocrUrl}`);
 

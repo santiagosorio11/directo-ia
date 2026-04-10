@@ -15,16 +15,16 @@
   --font-sans: 'DM Sans', sans-serif;
 }
 
-/* Base DIRECTO Design System - Premium Crimson */
+/* Base DIRECTO Design System - Premium Light with Crimson Accent */
 :root {
-  --background: #1A0D12;
-  --foreground: #FFFFFF;
+  --background: #F9FAFB;
+  --foreground: #111827;
   --primary: #C92A5E;
   --primary-foreground: #FFFFFF;
-  --border: #2D1D24;
-  --card: #24141A;
-  --muted: #9E8B92;
-  --muted-foreground: #4A3840;
+  --border: #E5E7EB;
+  --card: #FFFFFF;
+  --muted: #6B7280;
+  --muted-foreground: #9CA3AF;
   --ring: #C92A5E;
 }
 
@@ -44,15 +44,16 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Custom Scrollbar for Premium Feel */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 10px;
 }
 ::-webkit-scrollbar-track {
-  background: #09090B;
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #27272A;
+  background: #D1D5DB;
   border-radius: 10px;
+  border: 2px solid var(--background);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #3F3F46;
+  background: #9CA3AF;
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useDashboard } from "@/app/context/DashboardContext";
+import { useDashboard } from "./_context/DashboardContext";
 import { useEffect, useState } from "react";
 import AgentSection from "./components/AgentSection";
 import WhatsAppSection from "./components/WhatsAppSection";
@@ -24,8 +24,8 @@ export default function DashboardPage() {
   if (isLoading) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center h-full gap-4">
-        <Loader2 className="w-12 h-12 text-[#FF5200] animate-spin" />
-        <p className="text-white/40 font-bold tracking-widest text-sm uppercase">Cargando Operación...</p>
+        <Loader2 className="w-12 h-12 text-primary animate-spin" />
+        <p className="text-muted-foreground/60 font-bold tracking-widest text-sm uppercase">Cargando Operación...</p>
       </div>
     );
   }
@@ -33,9 +33,9 @@ export default function DashboardPage() {
   if (!restaurant) return null;
 
   return (
-    <div className="h-full w-full max-w-7xl mx-auto flex flex-col">
-      <header className="mb-8">
-        <h1 className="text-3xl font-heading font-extrabold text-white">
+    <div className="h-full w-full flex flex-col min-w-0">
+      <header className="mb-6 lg:mb-8 flex-shrink-0">
+        <h1 className="text-2xl lg:text-3xl font-heading font-extrabold text-foreground">
           {activeTab === "agent" && "Mi Agente"}
           {activeTab === "whatsapp" && "WhatsApp"}
           {activeTab === "orders" && "Lista de Pedidos"}
@@ -44,10 +44,10 @@ export default function DashboardPage() {
           {activeTab === "menu" && "Gestión de Menú"}
           {activeTab === "settings" && "Configuración"}
         </h1>
-        <p className="text-white/50 text-sm mt-1">Control de operaciones para {restaurant.business_name}</p>
+        <p className="text-muted-foreground text-sm mt-1 truncate">Control de operaciones para {restaurant.business_name}</p>
       </header>
 
-      <div className="flex-1 overflow-y-auto pb-20 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+      <div className="flex-1 overflow-y-auto pb-8 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] min-w-0">
         {activeTab === "agent" && <AgentSection />}
         {activeTab === "whatsapp" && <WhatsAppSection />}
         {activeTab === "orders" && <OrdersSection />}

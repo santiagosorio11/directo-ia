@@ -5,6 +5,7 @@ import React, { createContext, useContext, useState, ReactNode } from "react";
 export interface OnboardingData {
   // Step 0: Registration
   email: string;
+  fullName: string;
   phone: string;
   address: string;
   
@@ -12,6 +13,7 @@ export interface OnboardingData {
   businessName: string;
   foodType: string;
   schedule: string;
+  weeklySchedule: Record<string, { isOpen: boolean, openTime: string, closeTime: string }>;
   businessDescription: string;
   
   // Step 2: Menu OCR
@@ -40,11 +42,21 @@ export interface OnboardingData {
 
 const defaultData: OnboardingData = {
   email: "",
+  fullName: "",
   phone: "",
   address: "",
   businessName: "",
   foodType: "",
   schedule: "",
+  weeklySchedule: {
+    "Lunes": { isOpen: true, openTime: "12:00", closeTime: "22:00" },
+    "Martes": { isOpen: true, openTime: "12:00", closeTime: "22:00" },
+    "Miércoles": { isOpen: true, openTime: "12:00", closeTime: "22:00" },
+    "Jueves": { isOpen: true, openTime: "12:00", closeTime: "22:00" },
+    "Viernes": { isOpen: true, openTime: "12:00", closeTime: "22:00" },
+    "Sábado": { isOpen: true, openTime: "12:00", closeTime: "22:00" },
+    "Domingo": { isOpen: true, openTime: "12:00", closeTime: "22:00" },
+  },
   businessDescription: "",
   menuText: "",
   menuFileName: "",
@@ -70,6 +82,10 @@ interface OnboardingContextProps {
   setStep: (step: number) => void;
   isProcessing: boolean;
   setIsProcessing: (val: boolean) => void;
+  setCustomNextHandler: (handler: (() => void) | null) => void;
+  customNextHandler: (() => void) | null;
+  canNext: boolean;
+  setCanNext: (val: boolean) => void;
 }
 
 const OnboardingContext = createContext<OnboardingContextProps | undefined>(undefined);
@@ -81,6 +97,8 @@ export function OnboardingProvider({ children, initialStep = 0, initialEmail = "
   });
   const [currentStep, setCurrentStep] = useState(initialStep); 
   const [isProcessing, setIsProcessing] = useState(false);
+  const [customNextHandler, setCustomNextHandler] = useState<(() => void) | null>(null);
+  const [canNext, setCanNext] = useState(true);
 
   const updateData = (fields: Partial<OnboardingData>) => {
     setData((prev) => ({ ...prev, ...fields }));
@@ -91,7 +109,20 @@ export function OnboardingProvider({ children, initialStep = 0, initialEmail = "
   const setStep = (step: number) => setCurrentStep(step);
 
   return (
-    <OnboardingContext.Provider value={{ data, updateData, currentStep, nextStep, prevStep, setStep, isProcessing, setIsProcessing }}>
+    <OnboardingContext.Provider value={{ 
+      data, 
+      updateData, 
+      currentStep, 
+      nextStep, 
+      prevStep, 
+      setStep, 
+      isProcessing, 
+      setIsProcessing,
+      customNextHandler,
+      setCustomNextHandler,
+      canNext,
+      setCanNext
+    }}>
       {children}
     </OnboardingContext.Provider>
   );

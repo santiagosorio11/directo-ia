@@ -1,7 +1,22 @@
-const N8N_PROMPT_GEN_URL = process.env.N8N_PROMPT_GEN_URL || "https://n8n.iaorbita.com/webhook/d4be5f19-c642-44cc-89d8-e07bc1a819a4";
-const N8N_MASTER_AGENT_URL = process.env.N8N_MASTER_AGENT_URL || "https://n8n.iaorbita.com/webhook/750a29fd-1eb8-42ea-9a17-338b58a561cc";
+const N8N_PROMPT_GEN_URL = process.env.N8N_PROMPT_GEN_URL;
+const N8N_MASTER_AGENT_URL = process.env.N8N_MASTER_AGENT_URL;
 
+if (!N8N_PROMPT_GEN_URL) {
+  console.warn("⚠️ N8N_PROMPT_GEN_URL no está definida en las variables de entorno.");
+}
+if (!N8N_MASTER_AGENT_URL) {
+  console.warn("⚠️ N8N_MASTER_AGENT_URL no está definida en las variables de entorno.");
+}
+
+/**
+ * Genera el System Prompt maestro del agente enviando toda la data
+ * del restaurante a un flujo de n8n especializado.
+ */
 export async function generateMasterPrompt(restaurantData: any) {
+  if (!N8N_PROMPT_GEN_URL) {
+    throw new Error("N8N_PROMPT_GEN_URL no está configurada.");
+  }
+
   const response = await fetch(N8N_PROMPT_GEN_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -11,11 +26,22 @@ export async function generateMasterPrompt(restaurantData: any) {
   if (!response.ok) throw new Error(`n8n Prompt Gen Error: ${response.statusText}`);
   
   const data = await response.json();
-  // Se espera que n8n retorne { "generatedPrompt": "..." }
   return data.generatedPrompt || data; 
 }
 
-export async function callMasterAgent(payload: { systemPrompt: string; message: string; history: any[]; sessionId?: string }) {
+/**
+ * Envía un mensaje al Agente Maestro de n8n.
+ * n8n maneja internamente el historial de conversación por sessionId.
+ */
+export async function callMasterAgent(payload: {
+  systemPrompt: string;
+  message: string;
+  sessionId: string;
+}) {
+  if (!N8N_MASTER_AGENT_URL) {
+    throw new Error("N8N_MASTER_AGENT_URL no está configurada.");
+  }
+
   const response = await fetch(N8N_MASTER_AGENT_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -24,7 +50,5 @@ export async function callMasterAgent(payload: { systemPrompt: string; message: 
   
   if (!response.ok) throw new Error(`n8n Master Agent Error: ${response.statusText}`);
   
-  const data = await response.json();
-  // Se espera que n8n retorne la respuesta del agente
-  return data;
+  return await response.json();
 }

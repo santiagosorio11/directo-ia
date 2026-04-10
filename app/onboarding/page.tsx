@@ -1,5 +1,5 @@
-import { OnboardingProvider } from "../context/OnboardingContext";
-import { OnboardingFlow } from "../components/OnboardingFlow";
+import { OnboardingProvider } from "./_context/OnboardingContext";
+import { OnboardingFlow } from "./_components/OnboardingFlow";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function OnboardingPage() {

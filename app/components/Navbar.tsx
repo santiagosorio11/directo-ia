@@ -29,8 +29,8 @@ export default function Navbar() {
   ];
 
   const pillBase = scrolled || menuOpen
-    ? 'bg-black/60 backdrop-blur-2xl border border-white/10 shadow-2xl'
-    : 'bg-white/5 backdrop-blur-md border border-white/5 shadow-lg';
+    ? 'bg-white/80 backdrop-blur-2xl border border-black/5 shadow-xl shadow-black/[0.03]'
+    : 'bg-white/40 backdrop-blur-md border border-black/5 shadow-sm shadow-black/[0.01]';
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 flex justify-center pt-6 px-4 md:px-8 pointer-events-none">
@@ -54,7 +54,7 @@ export default function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="text-sm font-bold text-white/70 hover:text-white transition-colors tracking-wide"
+                className="text-sm font-black text-foreground/40 hover:text-primary transition-colors tracking-wide uppercase italic"
               >
                 {link.label}
               </Link>
@@ -64,13 +64,13 @@ export default function Navbar() {
           <div className="flex items-center gap-2 md:gap-4">
              <Link 
               href="/login" 
-              className="hidden md:flex px-6 py-2.5 text-white/50 hover:text-white rounded-full text-sm font-bold transition-all"
+              className="hidden md:flex px-6 py-2.5 text-foreground/40 hover:text-primary rounded-full text-sm font-black transition-all uppercase italic"
             >
               Entrar
             </Link>
             <Link 
               href="/onboarding" 
-              className="px-5 py-2.5 md:px-8 md:py-3.5 bg-primary text-white rounded-full text-sm md:text-base font-black transition-all shadow-xl shadow-primary/20 hover:scale-[1.05] active:scale-95 whitespace-nowrap"
+              className="px-5 py-2.5 md:px-8 md:py-3.5 bg-primary text-white rounded-full text-sm md:text-base font-black transition-all shadow-xl shadow-primary/20 hover:scale-[1.05] active:scale-95 whitespace-nowrap uppercase italic"
             >
               Inicia tu demo
             </Link>
@@ -78,7 +78,7 @@ export default function Navbar() {
             {/* Mobile Toggle */}
             <button
               onClick={() => setMenuOpen(!menuOpen)}
-              className="md:hidden w-10 h-10 flex items-center justify-center text-white"
+              className="md:hidden w-10 h-10 flex items-center justify-center text-foreground"
             >
               {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -88,7 +88,7 @@ export default function Navbar() {
         {/* Mobile Menu Content */}
         <div 
           className={`md:hidden transition-all duration-500 ease-in-out px-8 
-            ${menuOpen ? 'opacity-100 pb-12 pt-4 border-t border-white/5' : 'opacity-0 h-0 overflow-hidden'}
+            ${menuOpen ? 'opacity-100 pb-12 pt-4 border-t border-black/5' : 'opacity-0 h-0 overflow-hidden'}
           `}
         >
           <div className="flex flex-col gap-6">
@@ -96,15 +96,15 @@ export default function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="text-2xl font-heading font-black text-white hover:text-primary transition-colors"
+                className="text-2xl font-heading font-black text-foreground hover:text-primary transition-colors uppercase italic"
               >
                 {link.label}
               </Link>
             ))}
-            <div className="h-px bg-white/5 my-2" />
+            <div className="h-px bg-black/5 my-2" />
             <Link 
               href="/login" 
-              className="text-xl font-bold text-white/50"
+              className="text-xl font-black text-foreground/40 uppercase italic"
             >
               Iniciar Sesión
             </Link>

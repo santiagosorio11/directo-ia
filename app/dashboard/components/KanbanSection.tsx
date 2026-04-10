@@ -1,6 +1,6 @@
 "use client";
 
-import { useDashboard } from "@/app/context/DashboardContext";
+import { useDashboard } from "@/app/dashboard/_context/DashboardContext";
 import { MessageCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -42,7 +42,6 @@ export default function KanbanSection() {
     
     if (sourceCol === targetCol) return;
 
-    // Optimistic UI update
     setColumns(prev => {
       const newCols = { ...prev };
       const order = newCols[sourceCol].find(o => o.id === orderId);
@@ -52,8 +51,6 @@ export default function KanbanSection() {
       }
       return newCols;
     });
-
-    // En backend real: supabase update pipeline_stage
   };
 
   const allowDrop = (e: React.DragEvent) => {
@@ -61,41 +58,41 @@ export default function KanbanSection() {
   };
 
   return (
-    <div className="flex h-[calc(100vh-140px)] w-full gap-4 overflow-x-auto pb-4 [&::-webkit-scrollbar]:hidden">
+    <div className="flex flex-col lg:flex-row h-[calc(100vh-180px)] lg:h-[calc(100vh-140px)] w-full gap-4 overflow-x-auto overflow-y-hidden pb-4 [&::-webkit-scrollbar]:hidden">
       {STAGES.map(stage => (
         <div 
           key={stage.id} 
-          className="flex-shrink-0 w-[300px] flex flex-col bg-[#101014] border border-white/5 rounded-3xl"
+          className="flex-shrink-0 w-full sm:w-[280px] lg:w-[260px] xl:w-[300px] flex flex-col bg-slate-100/50 border border-slate-200/60 rounded-2xl sm:rounded-3xl min-h-[200px] lg:min-h-0"
           onDragOver={allowDrop}
           onDrop={(e) => handleDrop(e, stage.id)}
         >
-          <div className="p-4 border-b border-white/5 flex items-center justify-between">
+          <div className="p-3 sm:p-4 border-b border-slate-200/60 flex items-center justify-between flex-shrink-0">
             <div className="flex items-center gap-2">
-              <div className={`w-2.5 h-2.5 rounded-full ${stage.color}`} />
-              <h3 className="text-sm font-bold text-white uppercase tracking-widest">{stage.name}</h3>
+              <div className={`w-2.5 h-2.5 rounded-full ${stage.color} shadow-sm`} />
+              <h3 className="text-[11px] sm:text-xs font-black text-slate-500 uppercase tracking-widest">{stage.name}</h3>
             </div>
-            <div className="bg-white/10 px-2 py-0.5 rounded-full text-xs font-bold text-white/50">
+            <div className="bg-white/80 px-2 py-0.5 rounded-full text-[10px] font-black text-slate-400 border border-slate-200/50 shadow-sm">
               {columns[stage.id]?.length || 0}
             </div>
           </div>
           
-          <div className="p-4 flex-1 overflow-y-auto space-y-3">
+          <div className="p-3 sm:p-4 flex-1 overflow-y-auto space-y-3">
             {columns[stage.id]?.map((order) => (
               <div 
                 key={order.id}
                 draggable
                 onDragStart={(e) => handleDragStart(e, order.id, stage.id)}
-                className="bg-[#18181B] p-4 rounded-2xl border border-white/10 cursor-grab active:cursor-grabbing hover:border-white/20 transition-all shadow-sm"
+                className="bg-white p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-slate-200 cursor-grab active:cursor-grabbing hover:border-primary/30 hover:shadow-md transition-all shadow-sm group"
               >
-                <div className="flex justify-between items-start mb-2">
-                  <div className="font-bold text-white text-sm">{order.customer_name}</div>
-                  <div className="text-xs text-[#FF5200] font-black">${order.total}</div>
+                <div className="flex justify-between items-start mb-1">
+                  <div className="font-bold text-slate-800 text-sm truncate mr-2">{order.customer_name}</div>
+                  <div className="text-xs text-primary font-black flex-shrink-0">${order.total}</div>
                 </div>
-                <div className="text-xs text-white/40 mb-3">{order.customer_phone}</div>
+                <div className="text-[10px] sm:text-xs text-slate-400 font-medium mb-3">{order.customer_phone}</div>
                 
-                <div className="flex justify-between items-center mt-3 pt-3 border-t border-white/5">
-                   <div className="text-[10px] uppercase font-bold text-white/30">{order.items?.length || 0} items</div>
-                   <button className="text-white/20 hover:text-white transition-colors">
+                <div className="flex justify-between items-center mt-3 pt-3 border-t border-slate-50">
+                   <div className="text-[10px] uppercase font-black text-slate-300 tracking-wider transition-colors group-hover:text-slate-400">{order.items?.length || 0} items</div>
+                   <button className="text-slate-300 hover:text-primary transition-colors">
                      <MessageCircle className="w-4 h-4" />
                    </button>
                 </div>

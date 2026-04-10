@@ -1,6 +1,6 @@
 "use client";
 
-import { useDashboard } from "@/app/context/DashboardContext";
+import { useDashboard } from "@/app/dashboard/_context/DashboardContext";
 import { useState } from "react";
 import { Bot, Save, Mic, Info, Power, AlertTriangle } from "lucide-react";
 
@@ -46,77 +46,76 @@ export default function AgentSection() {
   if (!agentConfig) return null;
 
   return (
-    <div className="flex flex-col gap-8 max-w-4xl">
+    <div className="flex flex-col gap-6 lg:gap-8 w-full">
       {/* Estado del Agente */}
-      <div className="bg-[#18181B] border border-white/5 p-8 rounded-[32px] flex items-center justify-between">
-        <div className="flex items-center gap-6">
-          <div className={`w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg transition-all ${agentConfig.is_active ? 'bg-green-500 shadow-green-500/20' : 'bg-red-500 shadow-red-500/20'}`}>
-            <Power className="w-8 h-8 text-white" />
+      <div className="bg-white border border-slate-200 p-5 sm:p-8 rounded-2xl sm:rounded-[32px] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm">
+        <div className="flex items-center gap-4 sm:gap-6">
+          <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg transition-all flex-shrink-0 ${agentConfig.is_active ? 'bg-green-500 shadow-green-500/20' : 'bg-red-500 shadow-red-500/20'}`}>
+            <Power className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
           </div>
           <div>
-            <h2 className="text-2xl font-heading font-black text-white">Estado del Agente</h2>
-            <p className="text-white/50 text-sm mt-1">Activa o desactiva la recepción de pedidos en automático.</p>
+            <h2 className="text-xl sm:text-2xl font-heading font-black text-foreground">Estado del Agente</h2>
+            <p className="text-muted-foreground text-xs sm:text-sm mt-1">Activa o desactiva la recepción de pedidos en automático.</p>
           </div>
         </div>
         
         <button
           onClick={() => updateAgentStatus(!agentConfig.is_active)}
-          className={`px-8 py-4 rounded-full font-bold text-lg transition-all ${agentConfig.is_active ? 'bg-white/5 text-white/50 hover:bg-red-500 hover:text-white' : 'bg-green-500 text-white shadow-xl shadow-green-500/20 hover:scale-105'}`}
+          className={`w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 rounded-full font-bold text-sm sm:text-lg transition-all flex-shrink-0 ${agentConfig.is_active ? 'bg-slate-100 text-slate-500 hover:bg-red-500 hover:text-white' : 'bg-green-500 text-white shadow-xl shadow-green-500/20 hover:scale-105'}`}
         >
           {agentConfig.is_active ? "Apagar Agente" : "Encender Agente"}
         </button>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-8">
-        {/* Info Dinámica (Contexto situacional temporal) */}
-        <div className="bg-[#18181B] border border-white/5 p-8 rounded-[32px] flex flex-col gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+        {/* Info Dinámica */}
+        <div className="bg-white border border-slate-200 p-5 sm:p-8 rounded-2xl sm:rounded-[32px] flex flex-col gap-4 sm:gap-6 shadow-sm">
           <div className="flex items-center gap-3">
-            <Info className="w-6 h-6 text-[#C92A5E]" />
-            <h3 className="text-xl font-heading font-bold text-white">Información Dinámica</h3>
+            <Info className="w-5 h-5 sm:w-6 sm:h-6 text-primary flex-shrink-0" />
+            <h3 className="text-lg sm:text-xl font-heading font-bold text-foreground">Información Dinámica</h3>
           </div>
-          <p className="text-white/40 text-sm">Avisa al agente sobre demoras, lluvia, o si cerraron temprano. Se enviará junto al prompt siempre.</p>
+          <p className="text-muted-foreground text-xs sm:text-sm">Avisa al agente sobre demoras, lluvia, o si cerraron temprano. Se enviará junto al prompt siempre.</p>
           <textarea
             value={dynamicNotes}
             onChange={(e) => setDynamicNotes(e.target.value)}
             placeholder="Ej: Lluvia fuerte, tiempo de entrega aumentó 20 min. Ya no queda postre de chocolate."
-            className="w-full bg-[#09090B] border border-white/10 rounded-2xl p-4 text-sm resize-none h-32 focus:ring-2 focus:ring-[#C92A5E]/50 outline-none placeholder:text-white/20 text-white/80"
+            className="w-full bg-slate-50 border border-slate-200 rounded-xl sm:rounded-2xl p-3 sm:p-4 text-sm resize-none h-28 sm:h-32 focus:ring-2 focus:ring-primary/50 outline-none placeholder:text-slate-400 text-slate-700"
           ></textarea>
           <button 
             onClick={handleSaveDynamicInfo}
-            className="w-full py-4 bg-white/5 hover:bg-white/10 rounded-full font-bold text-sm transition-all focus:ring-2"
+            className="w-full py-3 sm:py-4 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-full font-bold text-sm transition-all focus:ring-2"
           >
             Actualizar Alerta
           </button>
         </div>
 
-        {/* Entrenamiento / Mejoras */}
-        <div className="bg-[#18181B] border border-white/5 p-8 rounded-[32px] flex flex-col gap-6">
+        {/* Entrenamiento */}
+        <div className="bg-white border border-slate-200 p-5 sm:p-8 rounded-2xl sm:rounded-[32px] flex flex-col gap-4 sm:gap-6 shadow-sm">
           <div className="flex items-center gap-3">
-            <Bot className="w-6 h-6 text-[#C92A5E]" />
-            <h3 className="text-xl font-heading font-bold text-white">Entrenar Agente</h3>
+            <Bot className="w-5 h-5 sm:w-6 sm:h-6 text-primary flex-shrink-0" />
+            <h3 className="text-lg sm:text-xl font-heading font-bold text-foreground">Entrenar Agente</h3>
           </div>
-          <p className="text-white/40 text-sm">¿Notas algo que responde mal? Dímelo en audio o texto y ajustaré su prompt.</p>
+          <p className="text-muted-foreground text-xs sm:text-sm">¿Notas algo que responde mal? Dímelo en audio o texto y ajustaré su prompt.</p>
           <div className="relative">
             <textarea
               value={trainingNotes}
               onChange={(e) => setTrainingNotes(e.target.value)}
               placeholder="Ej: Cuando pregunten por cubiertos diles que cobramos extra..."
-              className="w-full bg-[#09090B] border border-white/10 rounded-2xl p-4 pr-16 text-sm resize-none h-32 focus:ring-2 focus:ring-[#C92A5E]/50 outline-none placeholder:text-white/20 text-white/80"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl sm:rounded-2xl p-3 sm:p-4 pr-14 text-sm resize-none h-28 sm:h-32 focus:ring-2 focus:ring-primary/50 outline-none placeholder:text-slate-400 text-slate-700"
             ></textarea>
             <button
               onClick={startVoiceRecording}
-              className={`absolute right-3 top-3 w-10 h-10 rounded-full flex items-center justify-center transition-all ${isRecording ? 'bg-red-500 animate-pulse text-white' : 'bg-white/10 text-white/50 hover:bg-white/20'}`}
+              className={`absolute right-3 top-3 w-10 h-10 rounded-full flex items-center justify-center transition-all ${isRecording ? 'bg-red-500 animate-pulse text-white' : 'bg-slate-100 text-slate-500 hover:bg-primary hover:text-white shadow-sm'}`}
             >
               <Mic className="w-5 h-5" />
             </button>
           </div>
           <button 
             onClick={() => {
-              // Lógica temporal, luego debe pasar a AI -> prompt modification en n8n
               alert("Instrucción enviada a Orbita IA para mejorar el prompt.");
               setTrainingNotes("");
             }}
-            className="w-full py-4 bg-white/5 hover:bg-white/10 rounded-full font-bold text-sm transition-all "
+            className="w-full py-3 sm:py-4 bg-primary text-white rounded-full font-bold text-sm transition-all shadow-lg shadow-primary/20 hover:scale-[1.02]"
           >
             Enviar Instrucción
           </button>
@@ -124,18 +123,18 @@ export default function AgentSection() {
       </div>
 
       {/* Editor del Prompt Estático */}
-      <div className="bg-[#18181B] border border-white/5 p-8 rounded-[32px] flex flex-col gap-6">
-        <div className="flex items-start justify-between">
+      <div className="bg-white border border-slate-200 p-5 sm:p-8 rounded-2xl sm:rounded-[32px] flex flex-col gap-4 sm:gap-6 shadow-sm">
+        <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
           <div className="flex items-center gap-3">
-            <AlertTriangle className="w-6 h-6 text-yellow-500" />
+            <AlertTriangle className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-500 flex-shrink-0" />
             <div>
-              <h3 className="text-xl font-heading font-bold text-white">System Prompt (Avanzado)</h3>
-              <p className="text-white/40 text-sm mt-1">Este es el corazón de tu Agente. Solo edita si sabes lo que haces.</p>
+              <h3 className="text-lg sm:text-xl font-heading font-bold text-foreground">System Prompt (Avanzado)</h3>
+              <p className="text-muted-foreground text-xs sm:text-sm mt-1">Este es el corazón de tu Agente. Solo edita si sabes lo que haces.</p>
             </div>
           </div>
           <button 
             onClick={handleSavePrompt}
-            className="flex items-center gap-2 px-6 py-3 bg-[#C92A5E] hover:bg-[#A01F48] transition-all rounded-full font-bold text-sm"
+            className="flex items-center gap-2 px-6 py-3 bg-primary text-white hover:scale-[1.02] transition-all rounded-full font-bold text-sm w-full sm:w-auto justify-center flex-shrink-0 shadow-lg shadow-primary/20"
           >
             <Save className="w-4 h-4" /> Guardar
           </button>
@@ -144,7 +143,7 @@ export default function AgentSection() {
         <textarea
           value={promptText}
           onChange={(e) => setPromptText(e.target.value)}
-          className="w-full bg-[#09090B] border border-white/10 rounded-2xl p-6 text-sm resize-none h-96 focus:ring-1 focus:ring-[#C92A5E] outline-none text-green-400 font-mono leading-relaxed"
+          className="w-full bg-slate-50 border border-slate-200 rounded-xl sm:rounded-2xl p-4 sm:p-6 text-sm resize-none h-64 sm:h-96 focus:ring-2 focus:ring-primary/40 outline-none text-slate-700 font-mono leading-relaxed"
         ></textarea>
       </div>
     </div>
