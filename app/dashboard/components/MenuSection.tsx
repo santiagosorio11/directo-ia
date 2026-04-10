@@ -2,6 +2,7 @@
 
 import { useDashboard } from "@/app/dashboard/_context/DashboardContext";
 import { Plus, Image as ImageIcon, Edit2, Trash2 } from "lucide-react";
+import { useState } from "react";
 
 export default function MenuSection() {
   const { menu, addMenuItem, updateMenuItem, deleteMenuItem } = useDashboard();
