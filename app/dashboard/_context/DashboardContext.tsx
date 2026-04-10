@@ -59,6 +59,9 @@ interface DashboardContextProps {
   updateDynamicInfo: (info: any) => Promise<void>;
   updatePrompt: (newPrompt: string, reason?: string) => Promise<void>;
   improvePrompt: (notes: string) => Promise<void>;
+  addMenuItem: (item: Partial<MenuItem>) => Promise<void>;
+  updateMenuItem: (id: string, updates: Partial<MenuItem>) => Promise<void>;
+  deleteMenuItem: (id: string) => Promise<void>;
   logout: () => void;
   isLoading: boolean;
 }
@@ -211,6 +214,32 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const addMenuItem = async (item: Partial<MenuItem>) => {
+    if (!restaurant) return;
+    const { data: newItem, error } = await supabaseBrowser.from("menu_items").insert({
+      ...item,
+      restaurant_id: restaurant.id
+    }).select().single();
+    
+    if (!error && newItem) {
+      setMenu(prev => [...prev, newItem]);
+    }
+  };
+
+  const updateMenuItem = async (id: string, updates: Partial<MenuItem>) => {
+    const { error } = await supabaseBrowser.from("menu_items").update(updates).eq("id", id);
+    if (!error) {
+      setMenu(prev => prev.map(item => item.id === id ? { ...item, ...updates } : item));
+    }
+  };
+
+  const deleteMenuItem = async (id: string) => {
+    const { error } = await supabaseBrowser.from("menu_items").delete().eq("id", id);
+    if (!error) {
+      setMenu(prev => prev.filter(item => item.id !== id));
+    }
+  };
+
   const logout = async () => {
     await supabaseBrowser.auth.signOut();
     router.push("/login"); // or root
@@ -228,6 +257,9 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
       updateDynamicInfo,
       updatePrompt,
       improvePrompt,
+      addMenuItem,
+      updateMenuItem,
+      deleteMenuItem,
       logout,
       isLoading
     }}>

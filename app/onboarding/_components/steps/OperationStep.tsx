@@ -46,7 +46,7 @@ export function OperationStep() {
           setIsProcessing(false);
         }, 2000);
       } else {
-        throw new Error("No se pudo generar la infraestructura de ventas.");
+        throw new Error(result.error || "No se pudo generar la infraestructura de ventas.");
       }
     } catch (err: any) {
       console.error("n8n Generation Error", err);

@@ -10,16 +10,28 @@ export async function generateMasterPrompt(restaurantData: any) {
     throw new Error("N8N_PROMPT_GEN_URL no está configurada.");
   }
 
-  const response = await fetch(N8N_PROMPT_GEN_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(restaurantData)
-  });
-  
-  if (!response.ok) throw new Error(`n8n Prompt Gen Error: ${response.statusText}`);
-  
-  const data = await response.json();
-  return data.generatedPrompt || data; 
+  console.log(`Enviando webhook a n8n: ${N8N_PROMPT_GEN_URL.substring(0, 30)}...`);
+
+  try {
+    const response = await fetch(N8N_PROMPT_GEN_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(restaurantData)
+    });
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`Error de n8n (${response.status}):`, errorText);
+      throw new Error(`n8n Prompt Gen Error: ${response.statusText} (${response.status})`);
+    }
+    
+    const data = await response.json();
+    console.log("n8n respondió exitosamente");
+    return data.generatedPrompt || data; 
+  } catch (error: any) {
+    console.error("Error fatal en fetch a n8n:", error.message);
+    throw error;
+  }
 }
 
 /**

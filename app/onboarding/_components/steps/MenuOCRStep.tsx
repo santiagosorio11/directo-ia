@@ -429,9 +429,13 @@ export function MenuOCRStep() {
                     >
                       {/* Fila 1: Nombre y eliminar */}
                       <div className="flex justify-between items-start gap-2">
-                        <h4 className="text-[11px] font-black text-foreground leading-tight uppercase tracking-wide flex-1">
-                          {p.name || "Sin nombre"}
-                        </h4>
+                        <input
+                          type="text"
+                          value={p.name}
+                          placeholder="Nombre del plato"
+                          onChange={(e) => handleUpdateProduct(idx, { name: e.target.value })}
+                          className="text-[11px] font-black text-foreground leading-tight uppercase tracking-wide flex-1 bg-transparent border-none focus:ring-1 focus:ring-primary/20 rounded px-1 outline-none placeholder:text-foreground/20"
+                        />
                         <button 
                           onClick={() => handleRemoveProduct(idx)} 
                           className="text-foreground/20 hover:text-red-500 transition-colors p-1"
@@ -441,20 +445,34 @@ export function MenuOCRStep() {
                       </div>
 
                       {/* Fila 2: Categoria y Precio */}
-                      <div className="flex justify-between items-center pt-0.5">
-                        <span className="text-[9px] font-black text-foreground/30 uppercase tracking-widest truncate max-w-[200px]">
-                          {p.categoria || "Menú"}
-                        </span>
-                        <span className="text-[11px] font-black text-primary">
-                          ${p.price}
-                        </span>
+                      <div className="flex justify-between items-center pt-0.5 gap-4">
+                        <input
+                          type="text"
+                          value={p.categoria}
+                          placeholder="Categoría"
+                          onChange={(e) => handleUpdateProduct(idx, { categoria: e.target.value })}
+                          className="text-[9px] font-black text-foreground/30 uppercase tracking-widest bg-transparent border-none focus:ring-1 focus:ring-primary/20 rounded px-1 outline-none placeholder:text-foreground/10 flex-1"
+                        />
+                        <div className="flex items-center bg-foreground/[0.03] px-2 py-1 rounded-lg border border-foreground/5">
+                          <span className="text-[11px] font-black text-primary mr-1">$</span>
+                          <input
+                            type="text"
+                            value={p.price}
+                            placeholder="0"
+                            onChange={(e) => handleUpdateProduct(idx, { price: e.target.value })}
+                            className="text-[11px] font-black text-primary bg-transparent border-none focus:ring-0 w-16 outline-none text-right"
+                          />
+                        </div>
                       </div>
 
                       {/* Fila 3: Descripción */}
                       <div>
-                        <p className="text-[10px] text-foreground/50 font-medium leading-tight">
-                          {p.description || "Sin descripción"}
-                        </p>
+                        <textarea
+                          value={p.description}
+                          placeholder="Descripción del plato..."
+                          onChange={(e) => handleUpdateProduct(idx, { description: e.target.value })}
+                          className="w-full text-[10px] text-foreground/50 font-medium leading-tight bg-transparent border-none focus:ring-1 focus:ring-primary/20 rounded px-1 outline-none placeholder:text-foreground/20 resize-none h-10"
+                        />
                       </div>
 
                       {/* Fila 4: Variaciones */}
@@ -471,7 +489,10 @@ export function MenuOCRStep() {
                             </div>
                           ))
                         ) : (
-                          <span className="text-[9px] font-bold text-foreground/10 italic">Sin variantes</span>
+                          <div className="flex items-center gap-1 opacity-20">
+                            <Tag className="w-2.5 h-2.5" />
+                            <span className="text-[9px] font-bold italic">Sin variantes</span>
+                          </div>
                         )}
                       </div>
                     </motion.div>
