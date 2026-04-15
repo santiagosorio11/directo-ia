@@ -300,7 +300,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12">
           <div className="flex items-center gap-4">
              <div className="relative w-10 h-10 overflow-hidden rounded-xl bg-primary shadow-lg shadow-primary/20">
-                <Image src="/LOGODIRECTO.jpg" alt="DIRECTO" fill className="object-cover" />
+                <Image src="/LOGODIRECTO.jpg" alt="DIRECTO" fill sizes="40px" className="object-cover" />
              </div>
             <span className="font-heading font-black text-2xl uppercase italic tracking-tighter">DIRECTO</span>
           </div>

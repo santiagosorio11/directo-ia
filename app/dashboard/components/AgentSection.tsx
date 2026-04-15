@@ -1,11 +1,13 @@
 "use client";
 
 import { useDashboard } from "@/app/dashboard/_context/DashboardContext";
+import { useToast } from "@/app/dashboard/components/Toast";
 import { useState, useEffect } from "react";
 import { Bot, Save, Mic, Info, Power, AlertTriangle } from "lucide-react";
 
 export default function AgentSection() {
   const { agentConfig, updateAgentStatus, updateDynamicInfo, updatePrompt, improvePrompt } = useDashboard();
+  const { showToast } = useToast();
   const [dynamicNotes, setDynamicNotes] = useState(agentConfig?.dynamic_info?.notes || "");
   const [promptText, setPromptText] = useState(agentConfig?.system_prompt || "");
   const [trainingNotes, setTrainingNotes] = useState("");
@@ -21,12 +23,12 @@ export default function AgentSection() {
 
   const handleSaveDynamicInfo = async () => {
     await updateDynamicInfo({ ...agentConfig?.dynamic_info, notes: dynamicNotes });
-    alert("Información dinámica enviada al agente.");
+    showToast("Información dinámica enviada al agente.", "success");
   };
 
   const handleSavePrompt = async () => {
     await updatePrompt(promptText, "edit");
-    alert("Prompt guardado y actualizado con éxito.");
+    showToast("Prompt guardado y actualizado con éxito.", "success");
   };
 
   const handleTrainAgent = async () => {
@@ -35,9 +37,9 @@ export default function AgentSection() {
     try {
       await improvePrompt(trainingNotes);
       setTrainingNotes("");
-      alert("¡Instrucción procesada! Orbita IA ha ajustado el cerebro de tu agente.");
+      showToast("¡Instrucción procesada! Orbita IA ha ajustado el cerebro de tu agente.", "success");
     } catch (error) {
-      alert("No se pudo completar el entrenamiento. Intenta de nuevo.");
+      showToast("No se pudo completar el entrenamiento. Intenta de nuevo.", "error");
     } finally {
       setIsTraining(false);
     }
@@ -45,7 +47,7 @@ export default function AgentSection() {
 
   const startVoiceRecording = () => {
     if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-      alert("Tu navegador no soporta grabación de voz. Intenta escribirlo.");
+      showToast("Tu navegador no soporta grabación de voz.", "info");
       return;
     }
 

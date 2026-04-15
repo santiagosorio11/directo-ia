@@ -3,173 +3,143 @@
 import { useDashboard } from "@/app/dashboard/_context/DashboardContext";
 import { useState } from "react";
 import {
-  Bot, ClipboardList, Wallet, Columns, Utensils,
-  MessageCircle, Settings, LogOut, ChevronLeft, ChevronRight,
+  LayoutDashboard, ClipboardList, Wallet, Columns, Utensils,
+  MessageCircle, Settings, Megaphone
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
 export default function Sidebar() {
-  const { restaurant, agentConfig, logout } = useDashboard();
-  const [activeTab, setActiveTab] = useState("agent");
-  const [pinned, setPinned] = useState(false);
-  const [hovered, setHovered] = useState(false);
+  const { restaurant, agentConfig } = useDashboard();
+  const [activeTab, setActiveTab] = useState("overview");
+  const [mobileExpanded, setMobileExpanded] = useState(false);
 
-  // expanded applies to the visual width, but not the layout width
-  const expanded = pinned || hovered;
+  const mainTabs = [
+    { id: "overview",   name: "Inicio",     icon: LayoutDashboard },
+    { id: "whatsapp",   name: "WhatsApp",   icon: MessageCircle },
+    { id: "orders",     name: "Pedidos",    icon: ClipboardList },
+    { id: "payments",   name: "Pagos",      icon: Wallet },
+    { id: "kanban",     name: "Operación",  icon: Columns },
+    { id: "menu",       name: "Menú",       icon: Utensils },
+    { id: "marketing",  name: "Marketing",  icon: Megaphone },
+  ];
 
-  const tabs = [
-    { id: "agent",    name: "Mi Agente",  icon: Bot },
-    { id: "whatsapp", name: "WhatsApp",   icon: MessageCircle },
-    { id: "orders",   name: "Pedidos",    icon: ClipboardList },
-    { id: "payments", name: "Pagos",      icon: Wallet },
-    { id: "kanban",   name: "Operación",  icon: Columns },
-    { id: "menu",     name: "Menú",       icon: Utensils },
-    { id: "settings", name: "Ajustes",    icon: Settings },
+  const bottomTabs = [
+    { id: "settings",   name: "Ajustes",    icon: Settings },
   ];
 
   const handleTabClick = (tabId: string) => {
     setActiveTab(tabId);
     window.dispatchEvent(new CustomEvent("dashboardTabChange", { detail: tabId }));
+    setMobileExpanded(false);
   };
 
-  return (
-    <aside
-      className="relative z-50 flex-shrink-0 w-[68px] h-full"
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-    >
-      {/* 
-        This internal div is the one that actually expands. 
-        It's absolute so it stays on top of the content without pushing it.
-      */}
-      <div
-        className={`
-          absolute top-0 left-0 h-full flex flex-col justify-between
-          bg-white border-r border-slate-200 shadow-xl transition-all duration-300 ease-in-out
-          ${expanded ? "w-64" : "w-[68px]"}
-          py-5 px-3 overflow-hidden
-        `}
+  /* ── Nav items ── */
+  const renderNav = (tabList: typeof mainTabs, showLabels: boolean) => (
+    <nav className="flex flex-col gap-2 mt-4">
+      {tabList.map((tab) => {
+        const Icon = tab.icon;
+        const isActive = activeTab === tab.id;
+        return (
+          <button
+            key={tab.id}
+            onClick={() => handleTabClick(tab.id)}
+            className={`
+              group relative w-full flex items-center rounded-lg
+              transition-all duration-150 font-semibold text-sm
+              ${showLabels ? "gap-3 px-3 py-3" : "justify-center px-0 py-3"}
+              ${isActive
+                ? "bg-primary text-white shadow-sm shadow-primary/20"
+                : "text-slate-500 hover:bg-slate-50 hover:text-primary"
+              }
+            `}
+          >
+            <Icon
+              className={`w-[20px] h-[20px] flex-shrink-0 transition-colors ${
+                isActive ? "text-white" : "text-slate-400 group-hover:text-primary"
+              }`}
+            />
+            {showLabels && (
+              <span className="whitespace-nowrap">{tab.name}</span>
+            )}
+          </button>
+        );
+      })}
+    </nav>
+  );
+
+  /* ── Logo + status ── */
+  const renderLogo = (showLabels: boolean) => (
+    <div className={`flex items-center gap-3 pl-1 mb-2 mt-2 ${showLabels ? "" : "justify-center"}`}>
+      <Link
+        href="/"
+        className="relative flex-shrink-0 w-10 h-10 rounded-lg overflow-hidden bg-primary shadow-md shadow-primary/20 hover:scale-105 transition-transform"
       >
-        {/* ── Top section ── */}
-        <div className="flex flex-col gap-6 min-w-0">
+        <Image src="/LOGODIRECTO.jpg" alt="DIRECTO" fill sizes="40px" className="object-cover" />
+      </Link>
+      {showLabels && (
+        <h2 className="font-heading font-black text-lg text-slate-800 tracking-tight">
+          DIRECTO
+        </h2>
+      )}
+    </div>
+  );
 
-          {/* Logo + business name */}
-          <div className={`flex items-center gap-3 pl-1 ${expanded ? "" : "justify-center"}`}>
-            <Link
-              href="/"
-              className="relative flex-shrink-0 w-9 h-9 rounded-xl overflow-hidden bg-primary shadow-lg shadow-primary/20 hover:scale-105 transition-transform"
-            >
-              <Image src="/LOGODIRECTO.jpg" alt="DIRECTO" fill className="object-cover" />
-            </Link>
-
-            <div
-              className={`flex flex-col min-w-0 transition-opacity duration-200 ${
-                expanded ? "opacity-100" : "opacity-0 pointer-events-none"
-              }`}
-            >
-              <h2 className="font-bold text-sm leading-tight text-slate-800 truncate whitespace-nowrap">
-                {restaurant?.business_name || "Cargando..."}
-              </h2>
-              <div className="flex items-center gap-1.5 mt-0.5">
-                <div
-                  className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${
-                    agentConfig?.is_active
-                      ? "bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.3)]"
-                      : "bg-red-400"
-                  }`}
-                />
-                <span className="text-[10px] text-slate-400 uppercase tracking-wider font-bold whitespace-nowrap">
-                  {agentConfig?.is_active ? "En línea" : "Apagado"}
-                </span>
-              </div>
-            </div>
+  return (
+    <>
+      {/* ════════════════════════════════════════════════════════ */}
+      {/*  DESKTOP (lg+): Always expanded, in-flow                */}
+      {/* ════════════════════════════════════════════════════════ */}
+      <aside className="hidden lg:flex flex-shrink-0 w-52 h-full bg-white border-r border-slate-100">
+        <div className="h-full w-full flex flex-col justify-between py-4 px-2 overflow-y-auto overflow-x-hidden">
+          <div className="flex flex-col gap-4">
+            {renderLogo(true)}
+            <div className="h-px bg-slate-100 mx-1" />
+            {renderNav(mainTabs, true)}
           </div>
-
-          {/* Navigation */}
-          <nav className="flex flex-col gap-1">
-            {tabs.map((tab) => {
-              const Icon = tab.icon;
-              const isActive = activeTab === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => handleTabClick(tab.id)}
-                  className={`
-                    group relative w-full flex items-center rounded-xl
-                    transition-all duration-200 font-semibold text-sm
-                    ${expanded ? "gap-3 px-3 py-2.5" : "justify-center px-0 py-2.5"}
-                    ${isActive
-                      ? "bg-primary text-white shadow-md shadow-primary/20"
-                      : "text-slate-500 hover:bg-slate-50 hover:text-primary"
-                    }
-                  `}
-                >
-                  <Icon
-                    className={`w-5 h-5 flex-shrink-0 transition-colors ${
-                      isActive ? "text-white" : "text-slate-400 group-hover:text-primary"
-                    }`}
-                  />
-                  <span
-                    className={`whitespace-nowrap overflow-hidden transition-all duration-200 ${
-                      expanded ? "opacity-100 max-w-full" : "opacity-0 max-w-0"
-                    }`}
-                  >
-                    {tab.name}
-                  </span>
-                </button>
-              );
-            })}
-          </nav>
+          <div className="flex flex-col gap-4 mt-8 pb-2">
+            {renderNav(bottomTabs, true)}
+          </div>
         </div>
+      </aside>
 
-        {/* ── Bottom section ── */}
-        <div className="flex flex-col gap-1">
-          {/* Pin toggle — only on desktop (lg+) */}
-          <button
-            onClick={() => setPinned(!pinned)}
-            className={`
-              hidden lg:flex items-center rounded-xl py-2
-              text-slate-300 hover:text-slate-500 hover:bg-slate-50
-              transition-all duration-200
-              ${expanded ? "gap-3 px-3" : "justify-center px-0"}
-            `}
-            title={pinned ? "Desanclar" : "Fijar panel"}
-          >
-            {pinned
-              ? <ChevronLeft className="w-4 h-4 flex-shrink-0" />
-              : <ChevronRight className="w-4 h-4 flex-shrink-0" />
-            }
-            <span
-              className={`whitespace-nowrap overflow-hidden text-xs font-bold transition-all duration-200 ${
-                expanded ? "opacity-100 max-w-full" : "opacity-0 max-w-0"
-              }`}
-            >
-              {pinned ? "Desanclar" : "Fijar panel"}
-            </span>
-          </button>
+      {/* ════════════════════════════════════════════════════════ */}
+      {/*  MOBILE (<lg): Mini icon bar (60px), expands on hover  */}
+      {/* ════════════════════════════════════════════════════════ */}
 
-          {/* Logout */}
-          <button
-            onClick={logout}
-            className={`
-              group flex items-center rounded-xl py-2.5
-              text-slate-400 hover:bg-red-50 hover:text-red-500
-              transition-all duration-200 font-semibold text-sm
-              ${expanded ? "gap-3 px-3" : "justify-center px-0"}
-            `}
-          >
-            <LogOut className="w-5 h-5 flex-shrink-0" />
-            <span
-              className={`whitespace-nowrap overflow-hidden transition-all duration-200 ${
-                expanded ? "opacity-100 max-w-full" : "opacity-0 max-w-0"
-              }`}
-            >
-              Cerrar Sesión
-            </span>
-          </button>
+      {/* Backdrop when mobile-expanded */}
+      {mobileExpanded && (
+        <div
+          className="fixed inset-0 bg-black/20 z-40 lg:hidden"
+          onClick={() => setMobileExpanded(false)}
+        />
+      )}
+
+      <aside
+        className={`
+          lg:hidden fixed top-0 left-0 h-full z-50
+          bg-white border-r border-slate-100
+          transition-all duration-300 ease-in-out
+          ${mobileExpanded ? "w-52 shadow-xl" : "w-[60px]"}
+        `}
+        onMouseEnter={() => setMobileExpanded(true)}
+        onMouseLeave={() => setMobileExpanded(false)}
+        onTouchStart={() => setMobileExpanded(true)}
+      >
+        <div className="h-full w-full flex flex-col justify-between py-4 px-2 overflow-y-auto overflow-x-hidden">
+          <div className="flex flex-col gap-4">
+            {renderLogo(mobileExpanded)}
+            <div className="h-px bg-slate-100 mx-1" />
+            {renderNav(mainTabs, mobileExpanded)}
+          </div>
+          <div className="flex flex-col gap-4 mt-8 pb-2">
+            {renderNav(bottomTabs, mobileExpanded)}
+          </div>
         </div>
-      </div>
-    </aside>
+      </aside>
+
+      {/* Spacer for mobile — pushes content to the right of the mini bar */}
+      <div className="lg:hidden w-[60px] flex-shrink-0" />
+    </>
   );
 }

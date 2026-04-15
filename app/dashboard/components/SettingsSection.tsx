@@ -1,8 +1,9 @@
 "use client";
 
 import { useDashboard } from "@/app/dashboard/_context/DashboardContext";
-import { Store, Mail, Phone, MapPin, Save, LogOut } from "lucide-react";
+import { Store, Mail, Phone, MapPin, Save, LogOut, Clock, Building2, Plus } from "lucide-react";
 import { useState } from "react";
+import POSIntegrationCard from "./POSIntegrationCard";
 
 export default function SettingsSection() {
   const { restaurant, logout } = useDashboard();
@@ -83,6 +84,45 @@ export default function SettingsSection() {
           </div>
         </div>
       </div>
+
+      <div className="bg-white border border-slate-200 p-5 sm:p-8 rounded-2xl sm:rounded-[40px] flex flex-col gap-6 shadow-sm">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-slate-100 pb-6 gap-4">
+           <div>
+             <h3 className="text-lg font-black text-slate-800">Horarios y Sedes</h3>
+             <p className="text-sm text-slate-500 font-medium">Gestiona tu operación logística.</p>
+           </div>
+           <button className="flex items-center gap-2 px-6 py-2.5 bg-slate-100 text-slate-600 hover:bg-slate-200 rounded-full text-sm font-bold transition-all w-full sm:w-auto justify-center">
+             <Plus className="w-4 h-4 hidden" /> Configurar Detalles
+           </button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
+          <div className="flex flex-col gap-2">
+            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+              <Clock className="w-4 h-4 text-primary" /> Horario de Atención
+            </label>
+            <div className="bg-slate-50 border border-slate-200 px-4 py-3 rounded-2xl flex items-center justify-between text-slate-700 font-medium cursor-pointer hover:border-primary/50 transition-colors">
+              <span>Lunes a Domingo • 11:00 - 22:00</span>
+              <span className="text-primary text-xs font-bold">Cambiar</span>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+              <Building2 className="w-4 h-4 text-primary" /> Sedes / Sucursales
+            </label>
+            <div className="bg-slate-50 border border-slate-200 px-4 py-3 rounded-2xl flex items-center justify-between text-slate-700 font-medium cursor-pointer hover:border-primary/50 transition-colors">
+              <div className="flex items-center gap-2">
+                <span className="w-5 h-5 bg-primary/10 text-primary rounded-full flex items-center justify-center text-[10px] font-black">1</span>
+                <span>Sede Principal</span>
+              </div>
+              <span className="text-primary text-xs font-bold">+ Añadir Sede</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <POSIntegrationCard />
 
       <div className="bg-white border border-red-100 p-5 sm:p-8 rounded-2xl sm:rounded-[40px] flex flex-col gap-4 shadow-sm shadow-red-500/5">
         <h3 className="text-lg font-black text-red-500">Zona de Peligro</h3>

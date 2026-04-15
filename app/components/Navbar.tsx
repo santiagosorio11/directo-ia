@@ -44,7 +44,7 @@ export default function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex items-center group">
             <div className="relative w-9 h-9 md:w-11 md:h-11 overflow-hidden rounded-xl bg-primary transform group-hover:rotate-6 transition-transform shadow-lg shadow-primary/20">
-              <Image src="/LOGODIRECTO.jpg" alt="DIRECTO" fill className="object-cover" />
+              <Image src="/LOGODIRECTO.jpg" alt="DIRECTO" fill sizes="(max-width: 768px) 36px, 44px" className="object-cover" />
             </div>
           </Link>
 
