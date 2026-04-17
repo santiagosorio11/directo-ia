@@ -13,7 +13,7 @@ import {
 import { useState, useRef, useEffect } from "react";
 
 export function SuccessStep() {
-  const { data, setStep, setIsProcessing, setCustomNextHandler } = useOnboarding();
+  const { data, setStep, setIsProcessing, setCustomNextHandler, resetOnboarding } = useOnboarding();
   const router = useRouter();
   const [chatMessages, setChatMessages] = useState<{ role: "user" | "bot"; content: string }[]>([
     { role: "bot", content: `¡Hola! Soy ${data.agentName}, tu asesor de ventas. ¿Cómo puedo ayudarte hoy?` }
