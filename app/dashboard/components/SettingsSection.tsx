@@ -1,7 +1,7 @@
 "use client";
 
 import { useDashboard } from "@/app/dashboard/_context/DashboardContext";
-import { Store, Mail, Phone, MapPin, Save, LogOut, Clock, Building2, Plus } from "lucide-react";
+import { Store, Mail, Phone, MapPin, Save, LogOut, Clock, Building2, Plus, RefreshCcw } from "lucide-react";
 import { useState } from "react";
 import POSIntegrationCard from "./POSIntegrationCard";
 
@@ -123,6 +123,19 @@ export default function SettingsSection() {
       </div>
 
       <POSIntegrationCard />
+
+      <div className="bg-white border border-primary/10 p-5 sm:p-8 rounded-2xl sm:rounded-[40px] flex flex-col gap-4 shadow-sm shadow-primary/5 group">
+        <div className="flex flex-col gap-1">
+          <h3 className="text-lg font-black text-slate-800">Reconfigurar Asistente</h3>
+          <p className="text-sm text-slate-500 font-medium">¿Quieres cambiar el tono, la estrategia o el menú de tu agente? Repite el proceso guiado.</p>
+        </div>
+        <button 
+          onClick={() => window.location.href = "/onboarding"}
+          className="flex items-center justify-center gap-2 w-full md:w-auto px-8 py-3.5 bg-primary/5 text-primary hover:bg-primary hover:text-white rounded-2xl font-black text-sm transition-all border border-primary/20"
+        >
+          <RefreshCcw className="w-4 h-4" /> Iniciar Onboarding de Nuevo
+        </button>
+      </div>
 
       <div className="bg-white border border-red-100 p-5 sm:p-8 rounded-2xl sm:rounded-[40px] flex flex-col gap-4 shadow-sm shadow-red-500/5">
         <h3 className="text-lg font-black text-red-500">Zona de Peligro</h3>

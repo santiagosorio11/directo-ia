@@ -86,6 +86,7 @@ interface OnboardingContextProps {
   customNextHandler: (() => void) | null;
   canNext: boolean;
   setCanNext: (val: boolean) => void;
+  resetOnboarding: (skipAuth?: boolean) => void;
 }
 
 const OnboardingContext = createContext<OnboardingContextProps | undefined>(undefined);
@@ -108,6 +109,14 @@ export function OnboardingProvider({ children, initialStep = 0, initialEmail = "
   const prevStep = () => setCurrentStep((prev) => Math.max(prev - 1, 0));
   const setStep = (step: number) => setCurrentStep(step);
 
+  const resetOnboarding = (skipAuth: boolean = false) => {
+    setData({
+      ...defaultData,
+      email: data.email // Preserve current email
+    });
+    setCurrentStep(skipAuth ? 1 : 0);
+  };
+
   return (
     <OnboardingContext.Provider value={{ 
       data, 
@@ -121,7 +130,8 @@ export function OnboardingProvider({ children, initialStep = 0, initialEmail = "
       customNextHandler,
       setCustomNextHandler,
       canNext,
-      setCanNext
+      setCanNext,
+      resetOnboarding
     }}>
       {children}
     </OnboardingContext.Provider>

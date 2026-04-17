@@ -204,7 +204,7 @@ export function SuccessStep() {
         </div>
 
         <button 
-          onClick={() => setStep(0)}
+          onClick={() => resetOnboarding(true)}
           className="text-slate-300 font-bold uppercase tracking-widest text-[11px] hover:text-primary transition-all flex items-center gap-2"
         >
           <RefreshCcw className="w-4 h-4" /> REINICIAR EXPERIENCIA

@@ -10,7 +10,7 @@ export default async function OnboardingPage() {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between bg-background">
-      <OnboardingProvider initialStep={0} initialEmail={userEmail}>
+      <OnboardingProvider initialStep={isLoggedIn ? 1 : 0} initialEmail={userEmail}>
         <OnboardingFlow />
       </OnboardingProvider>
     </main>
