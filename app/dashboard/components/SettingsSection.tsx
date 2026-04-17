@@ -64,10 +64,9 @@ export default function SettingsSection() {
                 type="email" 
                 value={formData.email}
                 onChange={e => setFormData({...formData, email: e.target.value})}
-                className="bg-slate-100/50 border border-slate-200 px-4 py-3 rounded-2xl text-slate-400 outline-none font-medium cursor-not-allowed opacity-70"
-                disabled
+                className="bg-slate-50 border border-slate-200 px-4 py-3 rounded-2xl text-slate-700 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium"
               />
-              <span className="text-[10px] text-slate-400 font-medium px-1">El email no se puede cambiar.</span>
+              <span className="text-[10px] text-slate-400 font-medium px-1">Aquí recibirás pedidos y reportes semanales.</span>
             </div>
           </div>
 

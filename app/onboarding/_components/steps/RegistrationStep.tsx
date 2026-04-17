@@ -57,17 +57,17 @@ export function RegistrationStep() {
             </div>
           </div>
 
-          <div className="space-y-2 relative opacity-50">
+          <div className="space-y-2 relative">
             <label className="text-sm font-bold text-foreground opacity-70 px-1">
               ¿A qué correo te enviamos los pedidos y reportes?
             </label>
-            <div className="relative">
-              <LucideMail className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-muted" />
+            <div className="relative group">
+              <LucideMail className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-muted group-focus-within:text-primary transition-colors" />
               <input 
                 type="email" 
                 value={data.email}
-                disabled
-                className="w-full bg-[#EEF2F6] border-none px-14 py-5 rounded-[20px] outline-none text-base font-bold text-foreground/50 cursor-not-allowed"
+                onChange={(e) => updateData({ email: e.target.value })}
+                className="w-full bg-[#EEF2F6] border-none px-14 py-5 rounded-[20px] focus:ring-2 focus:ring-primary/20 outline-none transition-all text-base font-bold text-foreground"
               />
             </div>
           </div>
