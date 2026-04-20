@@ -48,12 +48,56 @@ export interface WhatsAppConfig {
   qr_code_url?: string;
 }
 
+export interface RestaurantTable {
+  id: string;
+  table_number: string;
+  capacity: number;
+  status: 'disponible' | 'apartada' | 'ocupada' | 'inactiva';
+  zone: string;
+  created_at: string;
+}
+
+export interface Reservation {
+  id: string;
+  table_id: string | null;
+  customer_name: string;
+  customer_phone: string;
+  customer_email?: string;
+  party_size: number;
+  reservation_date: string;
+  reservation_time: string;
+  duration_minutes: number;
+  status: 'pendiente' | 'confirmada' | 'en_mesa' | 'completada' | 'cancelada' | 'no_show';
+  notes?: string;
+  source: string;
+  created_at: string;
+  updated_at: string;
+  // Joined data
+  table?: RestaurantTable;
+}
+
+export interface Promotion {
+  id: string;
+  title: string;
+  description?: string;
+  discount_type?: string;
+  discount_value?: number;
+  applies_to: string[];
+  status: 'activa' | 'pausada' | 'borrador' | 'expirada';
+  start_date?: string;
+  end_date?: string;
+  created_at: string;
+}
+
 interface DashboardContextProps {
   restaurant: Restaurant | null;
   agentConfig: AgentConfig | null;
   menu: MenuItem[];
   orders: Order[];
   whatsappConfig: WhatsAppConfig | null;
+  tables: RestaurantTable[];
+  reservations: Reservation[];
+  promotions: Promotion[];
   refreshData: () => Promise<void>;
   updateAgentStatus: (isActive: boolean) => Promise<void>;
   updateDynamicInfo: (info: any) => Promise<void>;
@@ -62,6 +106,23 @@ interface DashboardContextProps {
   addMenuItem: (item: Partial<MenuItem>) => Promise<void>;
   updateMenuItem: (id: string, updates: Partial<MenuItem>) => Promise<void>;
   deleteMenuItem: (id: string) => Promise<void>;
+  // Tables
+  addTable: (table: Partial<RestaurantTable>) => Promise<void>;
+  updateTable: (id: string, updates: Partial<RestaurantTable>) => Promise<void>;
+  deleteTable: (id: string) => Promise<void>;
+  bulkCreateTables: (count: number, capacity: number, zone: string) => Promise<void>;
+  // Reservations
+  addReservation: (reservation: Partial<Reservation>) => Promise<void>;
+  updateReservation: (id: string, updates: Partial<Reservation>) => Promise<void>;
+  deleteReservation: (id: string) => Promise<void>;
+  // Promotions
+  addPromotion: (promo: Partial<Promotion>) => Promise<void>;
+  updatePromotion: (id: string, updates: Partial<Promotion>) => Promise<void>;
+  deletePromotion: (id: string) => Promise<void>;
+  // Orders
+  updateOrderStage: (id: string, stage: string) => Promise<void>;
+  // Restaurant
+  updateRestaurant: (updates: Partial<Restaurant>) => Promise<void>;
   logout: () => void;
   isLoading: boolean;
 }
@@ -75,6 +136,9 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
   const [menu, setMenu] = useState<MenuItem[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [whatsappConfig, setWhatsappConfig] = useState<WhatsAppConfig | null>(null);
+  const [tables, setTables] = useState<RestaurantTable[]>([]);
+  const [reservations, setReservations] = useState<Reservation[]>([]);
+  const [promotions, setPromotions] = useState<Promotion[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const supabaseBrowser = createClient();
@@ -109,11 +173,14 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
 
       const restaurantId = restRes.data.id;
 
-      const [agentRes, menuRes, ordersRes, waRes] = await Promise.all([
+      const [agentRes, menuRes, ordersRes, waRes, tablesRes, reservationsRes, promotionsRes] = await Promise.all([
         supabaseBrowser.from("agent_config").select("*").eq("restaurant_id", restaurantId).single(),
         supabaseBrowser.from("menu_items").select("*").eq("restaurant_id", restaurantId).order("sort_order"),
         supabaseBrowser.from("orders").select("*").eq("restaurant_id", restaurantId).order("created_at", { ascending: false }),
-        supabaseBrowser.from("whatsapp_config").select("*").eq("restaurant_id", restaurantId).maybeSingle()
+        supabaseBrowser.from("whatsapp_config").select("*").eq("restaurant_id", restaurantId).maybeSingle(),
+        supabaseBrowser.from("restaurant_tables").select("*").eq("restaurant_id", restaurantId).order("table_number"),
+        supabaseBrowser.from("reservations").select("*, table:restaurant_tables(*)").eq("restaurant_id", restaurantId).order("reservation_date", { ascending: true }),
+        supabaseBrowser.from("promotions").select("*").eq("restaurant_id", restaurantId).order("created_at", { ascending: false }),
       ]);
 
       setRestaurant(restRes.data);
@@ -121,6 +188,9 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
       if (menuRes.data) setMenu(menuRes.data);
       if (ordersRes.data) setOrders(ordersRes.data);
       if (waRes.data) setWhatsappConfig(waRes.data);
+      if (tablesRes.data) setTables(tablesRes.data);
+      if (reservationsRes.data) setReservations(reservationsRes.data);
+      if (promotionsRes.data) setPromotions(promotionsRes.data);
     } catch (e) {
       console.error("Error loading dashboard data", e);
     } finally {
@@ -214,6 +284,7 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  // ─── Menu CRUD ───
   const addMenuItem = async (item: Partial<MenuItem>) => {
     if (!restaurant) return;
     const { data: newItem, error } = await supabaseBrowser.from("menu_items").insert({
@@ -240,6 +311,139 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  // ─── Tables CRUD ───
+  const addTable = async (table: Partial<RestaurantTable>) => {
+    if (!restaurant) return;
+    const { data, error } = await supabaseBrowser.from("restaurant_tables").insert({
+      ...table,
+      restaurant_id: restaurant.id,
+    }).select().single();
+    if (!error && data) {
+      setTables(prev => [...prev, data]);
+    }
+  };
+
+  const updateTable = async (id: string, updates: Partial<RestaurantTable>) => {
+    const { error } = await supabaseBrowser.from("restaurant_tables").update(updates).eq("id", id);
+    if (!error) {
+      setTables(prev => prev.map(t => t.id === id ? { ...t, ...updates } : t));
+    }
+  };
+
+  const deleteTable = async (id: string) => {
+    const { error } = await supabaseBrowser.from("restaurant_tables").delete().eq("id", id);
+    if (!error) {
+      setTables(prev => prev.filter(t => t.id !== id));
+    }
+  };
+
+  const bulkCreateTables = async (count: number, capacity: number, zone: string) => {
+    if (!restaurant) return;
+    const existingCount = tables.length;
+    const newTables = Array.from({ length: count }, (_, i) => ({
+      restaurant_id: restaurant.id,
+      table_number: `Mesa ${existingCount + i + 1}`,
+      capacity,
+      status: 'disponible' as const,
+      zone,
+    }));
+    const { data, error } = await supabaseBrowser.from("restaurant_tables").insert(newTables).select();
+    if (!error && data) {
+      setTables(prev => [...prev, ...data]);
+    }
+  };
+
+  // ─── Reservations CRUD ───
+  const addReservation = async (reservation: Partial<Reservation>) => {
+    if (!restaurant) return;
+    const { data, error } = await supabaseBrowser.from("reservations").insert({
+      ...reservation,
+      restaurant_id: restaurant.id,
+    }).select("*, table:restaurant_tables(*)").single();
+    if (!error && data) {
+      setReservations(prev => [...prev, data]);
+      // If table assigned, mark as "apartada"
+      if (reservation.table_id) {
+        await updateTable(reservation.table_id, { status: 'apartada' });
+      }
+    }
+  };
+
+  const updateReservation = async (id: string, updates: Partial<Reservation>) => {
+    const { error } = await supabaseBrowser.from("reservations").update({
+      ...updates,
+      updated_at: new Date().toISOString(),
+    }).eq("id", id);
+    if (!error) {
+      setReservations(prev => prev.map(r => r.id === id ? { ...r, ...updates } : r));
+      // Handle table status changes
+      const reservation = reservations.find(r => r.id === id);
+      if (reservation?.table_id) {
+        if (updates.status === 'completada' || updates.status === 'cancelada' || updates.status === 'no_show') {
+          await updateTable(reservation.table_id, { status: 'disponible' });
+        } else if (updates.status === 'en_mesa') {
+          await updateTable(reservation.table_id, { status: 'ocupada' });
+        } else if (updates.status === 'confirmada') {
+          await updateTable(reservation.table_id, { status: 'apartada' });
+        }
+      }
+    }
+  };
+
+  const deleteReservation = async (id: string) => {
+    const reservation = reservations.find(r => r.id === id);
+    const { error } = await supabaseBrowser.from("reservations").delete().eq("id", id);
+    if (!error) {
+      setReservations(prev => prev.filter(r => r.id !== id));
+      if (reservation?.table_id) {
+        await updateTable(reservation.table_id, { status: 'disponible' });
+      }
+    }
+  };
+
+  // ─── Promotions CRUD ───
+  const addPromotion = async (promo: Partial<Promotion>) => {
+    if (!restaurant) return;
+    const { data, error } = await supabaseBrowser.from("promotions").insert({
+      ...promo,
+      restaurant_id: restaurant.id,
+    }).select().single();
+    if (!error && data) {
+      setPromotions(prev => [data, ...prev]);
+    }
+  };
+
+  const updatePromotion = async (id: string, updates: Partial<Promotion>) => {
+    const { error } = await supabaseBrowser.from("promotions").update(updates).eq("id", id);
+    if (!error) {
+      setPromotions(prev => prev.map(p => p.id === id ? { ...p, ...updates } : p));
+    }
+  };
+
+  const deletePromotion = async (id: string) => {
+    const { error } = await supabaseBrowser.from("promotions").delete().eq("id", id);
+    if (!error) {
+      setPromotions(prev => prev.filter(p => p.id !== id));
+    }
+  };
+
+  // ─── Orders ───
+  const updateOrderStage = async (id: string, stage: string) => {
+    const { error } = await supabaseBrowser.from("orders").update({ pipeline_stage: stage }).eq("id", id);
+    if (!error) {
+      setOrders(prev => prev.map(o => o.id === id ? { ...o, pipeline_stage: stage } : o));
+    }
+  };
+
+  // ─── Restaurant ───
+  const updateRestaurant = async (updates: Partial<Restaurant>) => {
+    if (!restaurant) return;
+    const { error } = await supabaseBrowser.from("restaurants").update(updates).eq("id", restaurant.id);
+    if (!error) {
+      setRestaurant({ ...restaurant, ...updates });
+    }
+  };
+
   const logout = async () => {
     await supabaseBrowser.auth.signOut();
     router.push("/login"); // or root
@@ -252,6 +456,9 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
       menu,
       orders,
       whatsappConfig,
+      tables,
+      reservations,
+      promotions,
       refreshData: fetchDashboardData,
       updateAgentStatus,
       updateDynamicInfo,
@@ -260,6 +467,18 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
       addMenuItem,
       updateMenuItem,
       deleteMenuItem,
+      addTable,
+      updateTable,
+      deleteTable,
+      bulkCreateTables,
+      addReservation,
+      updateReservation,
+      deleteReservation,
+      addPromotion,
+      updatePromotion,
+      deletePromotion,
+      updateOrderStage,
+      updateRestaurant,
       logout,
       isLoading
     }}>

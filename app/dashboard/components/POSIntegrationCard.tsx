@@ -29,6 +29,9 @@ export default function POSIntegrationCard() {
     { id: "fudo", name: "Fudo" },
     { id: "siigo", name: "Siigo POS" },
     { id: "yummy", name: "Yummy (Delivery)" },
+    { id: "yuumi", name: "Yuumi POS" },
+    { id: "alegra", name: "Alegra" },
+    { id: "zeus", name: "Zeus POS" },
   ];
 
   useEffect(() => {

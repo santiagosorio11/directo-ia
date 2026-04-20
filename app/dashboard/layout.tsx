@@ -7,14 +7,14 @@ import Sidebar from "./components/Sidebar";
 import TopBar from "./components/TopBar";
 
 const TAB_TITLES: Record<string, { title: string; subtitle?: string }> = {
-  overview: { title: "Panel de Control" },
-  whatsapp: { title: "WhatsApp", subtitle: "Conexión y campañas" },
-  orders: { title: "Lista de Pedidos" },
-  payments: { title: "Confirmación de Pagos" },
-  kanban: { title: "Operación (Kanban)" },
-  menu: { title: "Gestión de Menú" },
-  marketing: { title: "Marketing", subtitle: "Repertorio de promociones" },
-  settings: { title: "Configuración" },
+  overview:     { title: "Panel de Control" },
+  orders:       { title: "Lista de Pedidos" },
+  payments:     { title: "Confirmación de Pagos" },
+  reservations: { title: "Reservas", subtitle: "Gestión de mesas y reservaciones" },
+  kanban:       { title: "Operación (Kanban)" },
+  menu:         { title: "Gestión de Menú" },
+  marketing:    { title: "Marketing & WhatsApp", subtitle: "Campañas, promociones y conexión" },
+  settings:     { title: "Configuración" },
 };
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {

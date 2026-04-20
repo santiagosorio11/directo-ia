@@ -2,10 +2,27 @@
 
 import { useDashboard } from "@/app/dashboard/_context/DashboardContext";
 import { CheckCircle2, XCircle, AlertCircle, MessageCircle } from "lucide-react";
+import { useToast } from "./Toast";
 
 export default function PaymentsSection() {
-  const { orders } = useDashboard();
+  const { orders, updateOrderStage } = useDashboard();
+  const { showToast } = useToast();
   const pendingPayments = orders.filter(o => o.pipeline_stage === 'confirmacion_pago');
+
+  const handleApprove = async (orderId: string, customerName: string) => {
+    await updateOrderStage(orderId, 'pedido_confirmado');
+    showToast(`Pago de ${customerName} aprobado ✅`, "success");
+  };
+
+  const handleReject = async (orderId: string, customerName: string) => {
+    await updateOrderStage(orderId, 'cancelado');
+    showToast(`Pago de ${customerName} rechazado`, "error");
+  };
+
+  const handleContact = (phone: string) => {
+    const cleanPhone = phone.replace(/\D/g, "");
+    window.open(`https://wa.me/${cleanPhone}`, "_blank");
+  };
 
   return (
     <div className="flex flex-col gap-6 lg:gap-8 w-full">
@@ -63,17 +80,17 @@ export default function PaymentsSection() {
                </div>
 
                {/* Action buttons */}
-               <div className="flex flex-row gap-3 w-full">
-                 <button className="flex-1 flex items-center justify-center gap-2 py-3 sm:py-4 bg-green-500 hover:bg-green-600 text-white rounded-xl sm:rounded-2xl font-bold text-xs sm:text-sm transition-all shadow-lg shadow-green-500/10">
-                   <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5" /> Aprobar
-                 </button>
-                 <button className="flex-1 flex items-center justify-center gap-2 py-3 sm:py-4 bg-red-50 hover:bg-red-100 text-red-500 border border-red-100 rounded-xl sm:rounded-2xl font-bold text-xs sm:text-sm transition-all">
-                   <XCircle className="w-4 h-4 sm:w-5 sm:h-5" /> Rechazar
-                 </button>
-                 <button className="flex-1 flex items-center justify-center gap-2 py-3 sm:py-4 bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-200 rounded-xl sm:rounded-2xl font-bold text-xs sm:text-sm transition-all">
-                   <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5" /> Contactar
-                 </button>
-               </div>
+                <div className="flex flex-row gap-3 w-full">
+                  <button onClick={() => handleApprove(p.id, p.customer_name)} className="flex-1 flex items-center justify-center gap-2 py-3 sm:py-4 bg-green-500 hover:bg-green-600 text-white rounded-xl sm:rounded-2xl font-bold text-xs sm:text-sm transition-all shadow-lg shadow-green-500/10">
+                    <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5" /> Aprobar
+                  </button>
+                  <button onClick={() => handleReject(p.id, p.customer_name)} className="flex-1 flex items-center justify-center gap-2 py-3 sm:py-4 bg-red-50 hover:bg-red-100 text-red-500 border border-red-100 rounded-xl sm:rounded-2xl font-bold text-xs sm:text-sm transition-all">
+                    <XCircle className="w-4 h-4 sm:w-5 sm:h-5" /> Rechazar
+                  </button>
+                  <button onClick={() => handleContact(p.customer_phone)} className="flex-1 flex items-center justify-center gap-2 py-3 sm:py-4 bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-200 rounded-xl sm:rounded-2xl font-bold text-xs sm:text-sm transition-all">
+                    <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5" /> Contactar
+                  </button>
+                </div>
              </div>
            ))}
          </div>

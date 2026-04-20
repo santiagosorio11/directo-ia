@@ -14,7 +14,7 @@ const STAGES = [
 ];
 
 export default function KanbanSection() {
-  const { orders } = useDashboard();
+  const { orders, updateOrderStage } = useDashboard();
   const [columns, setColumns] = useState<Record<string, any[]>>({});
 
   useEffect(() => {
@@ -42,6 +42,7 @@ export default function KanbanSection() {
     
     if (sourceCol === targetCol) return;
 
+    // Optimistically update UI
     setColumns(prev => {
       const newCols = { ...prev };
       const order = newCols[sourceCol].find(o => o.id === orderId);
@@ -51,6 +52,9 @@ export default function KanbanSection() {
       }
       return newCols;
     });
+
+    // Persist to Supabase
+    await updateOrderStage(orderId, targetCol);
   };
 
   const allowDrop = (e: React.DragEvent) => {

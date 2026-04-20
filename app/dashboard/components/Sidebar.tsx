@@ -4,7 +4,7 @@ import { useDashboard } from "@/app/dashboard/_context/DashboardContext";
 import { useState } from "react";
 import {
   LayoutDashboard, ClipboardList, Wallet, Columns, Utensils,
-  MessageCircle, Settings, Megaphone
+  Megaphone, Settings, CalendarCheck
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -15,13 +15,13 @@ export default function Sidebar() {
   const [mobileExpanded, setMobileExpanded] = useState(false);
 
   const mainTabs = [
-    { id: "overview",   name: "Inicio",     icon: LayoutDashboard },
-    { id: "whatsapp",   name: "WhatsApp",   icon: MessageCircle },
-    { id: "orders",     name: "Pedidos",    icon: ClipboardList },
-    { id: "payments",   name: "Pagos",      icon: Wallet },
-    { id: "kanban",     name: "Operación",  icon: Columns },
-    { id: "menu",       name: "Menú",       icon: Utensils },
-    { id: "marketing",  name: "Marketing",  icon: Megaphone },
+    { id: "overview",      name: "Inicio",               icon: LayoutDashboard },
+    { id: "orders",        name: "Pedidos",              icon: ClipboardList },
+    { id: "payments",      name: "Pagos",                icon: Wallet },
+    { id: "reservations",  name: "Reservas",             icon: CalendarCheck },
+    { id: "kanban",        name: "Operación",            icon: Columns },
+    { id: "menu",          name: "Menú",                 icon: Utensils },
+    { id: "marketing",     name: "Marketing",            icon: Megaphone },
   ];
 
   const bottomTabs = [

@@ -1,12 +1,15 @@
 "use client";
 
 import { useDashboard } from "@/app/dashboard/_context/DashboardContext";
-import { Store, Mail, Phone, MapPin, Save, LogOut, Clock, Building2, Plus, RefreshCcw } from "lucide-react";
+import { Store, Mail, Phone, MapPin, Save, LogOut, Clock, Building2, Plus, RefreshCcw, Loader2 } from "lucide-react";
 import { useState } from "react";
 import POSIntegrationCard from "./POSIntegrationCard";
+import { useToast } from "./Toast";
 
 export default function SettingsSection() {
-  const { restaurant, logout } = useDashboard();
+  const { restaurant, updateRestaurant, logout } = useDashboard();
+  const { showToast } = useToast();
+  const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState({
     business_name: restaurant?.business_name || "",
     email: restaurant?.email || "",
@@ -15,6 +18,18 @@ export default function SettingsSection() {
   });
 
   if (!restaurant) return null;
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      await updateRestaurant(formData);
+      showToast("Cambios guardados correctamente", "success");
+    } catch (e) {
+      showToast("Error al guardar los cambios", "error");
+    } finally {
+      setSaving(false);
+    }
+  };
 
   return (
     <div className="flex flex-col gap-6 lg:gap-8 w-full max-w-3xl">
@@ -26,8 +41,13 @@ export default function SettingsSection() {
       <div className="bg-white border border-slate-200 p-5 sm:p-8 rounded-2xl sm:rounded-[40px] flex flex-col gap-6 shadow-sm">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-slate-100 pb-6 gap-4">
            <h3 className="text-lg font-black text-slate-800">Perfil del Negocio</h3>
-           <button className="flex items-center gap-2 px-6 py-2.5 bg-primary text-white hover:opacity-90 rounded-full text-sm font-bold transition-all w-full sm:w-auto justify-center shadow-lg shadow-primary/20">
-             <Save className="w-4 h-4" /> Guardar Cambios
+           <button
+             onClick={handleSave}
+             disabled={saving}
+             className="flex items-center gap-2 px-6 py-2.5 bg-primary text-white hover:opacity-90 rounded-full text-sm font-bold transition-all w-full sm:w-auto justify-center shadow-lg shadow-primary/20 disabled:opacity-50"
+           >
+             {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+             {saving ? "Guardando..." : "Guardar Cambios"}
            </button>
         </div>
 
@@ -36,8 +56,8 @@ export default function SettingsSection() {
             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
               <Store className="w-4 h-4 text-primary" /> Nombre del Restaurante
             </label>
-            <input 
-              type="text" 
+            <input
+              type="text"
               value={formData.business_name}
               onChange={e => setFormData({...formData, business_name: e.target.value})}
               className="bg-slate-50 border border-slate-200 px-4 py-3 rounded-2xl text-slate-700 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium"
@@ -49,8 +69,8 @@ export default function SettingsSection() {
               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
                 <Phone className="w-4 h-4 text-primary" /> Teléfono
               </label>
-              <input 
-                type="text" 
+              <input
+                type="text"
                 value={formData.phone}
                 onChange={e => setFormData({...formData, phone: e.target.value})}
                 className="bg-slate-50 border border-slate-200 px-4 py-3 rounded-2xl text-slate-700 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium"
@@ -60,8 +80,8 @@ export default function SettingsSection() {
               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
                 <Mail className="w-4 h-4 text-primary" /> Email de Contacto
               </label>
-              <input 
-                type="email" 
+              <input
+                type="email"
                 value={formData.email}
                 onChange={e => setFormData({...formData, email: e.target.value})}
                 className="bg-slate-50 border border-slate-200 px-4 py-3 rounded-2xl text-slate-700 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium"
@@ -74,8 +94,8 @@ export default function SettingsSection() {
             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
               <MapPin className="w-4 h-4 text-primary" /> Dirección de Despacho
             </label>
-            <input 
-              type="text" 
+            <input
+              type="text"
               value={formData.address}
               onChange={e => setFormData({...formData, address: e.target.value})}
               className="bg-slate-50 border border-slate-200 px-4 py-3 rounded-2xl text-slate-700 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium"
@@ -128,7 +148,7 @@ export default function SettingsSection() {
           <h3 className="text-lg font-black text-slate-800">Reconfigurar Asistente</h3>
           <p className="text-sm text-slate-500 font-medium">¿Quieres cambiar el tono, la estrategia o el menú de tu agente? Repite el proceso guiado.</p>
         </div>
-        <button 
+        <button
           onClick={() => window.location.href = "/onboarding"}
           className="flex items-center justify-center gap-2 w-full md:w-auto px-8 py-3.5 bg-primary/5 text-primary hover:bg-primary hover:text-white rounded-2xl font-black text-sm transition-all border border-primary/20"
         >
@@ -139,7 +159,7 @@ export default function SettingsSection() {
       <div className="bg-white border border-red-100 p-5 sm:p-8 rounded-2xl sm:rounded-[40px] flex flex-col gap-4 shadow-sm shadow-red-500/5">
         <h3 className="text-lg font-black text-red-500">Zona de Peligro</h3>
         <p className="text-sm text-slate-500 font-medium mb-2">Acciones que afectan tu sesión actual.</p>
-        <button 
+        <button
           onClick={logout}
           className="flex items-center justify-center gap-2 w-full md:w-auto px-8 py-3.5 bg-red-50 text-red-500 hover:bg-red-500 hover:text-white rounded-2xl font-black text-sm transition-all border border-red-100"
         >

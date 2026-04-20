@@ -3,9 +3,9 @@
 import { useDashboard } from "./_context/DashboardContext";
 import { useEffect, useState } from "react";
 import OverviewSection from "./components/OverviewSection";
-import WhatsAppSection from "./components/WhatsAppSection";
 import OrdersSection from "./components/OrdersSection";
 import PaymentsSection from "./components/PaymentsSection";
+import ReservationsSection from "./components/ReservationsSection";
 import KanbanSection from "./components/KanbanSection";
 import MenuSection from "./components/MenuSection";
 import MarketingSection from "./components/MarketingSection";
@@ -39,9 +39,9 @@ export default function DashboardPage() {
       {/* Módulo Principal */}
       <div className="flex-1 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] min-w-0 pr-1 pb-6 w-full">
         {activeTab === "overview" && <OverviewSection />}
-        {activeTab === "whatsapp" && <WhatsAppSection />}
         {activeTab === "orders" && <OrdersSection />}
         {activeTab === "payments" && <PaymentsSection />}
+        {activeTab === "reservations" && <ReservationsSection />}
         {activeTab === "kanban" && <KanbanSection />}
         {activeTab === "menu" && <MenuSection />}
         {activeTab === "marketing" && <MarketingSection />}

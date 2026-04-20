@@ -282,7 +282,7 @@ export default function OverviewSection() {
               <h3 className="text-sm font-bold text-slate-800 mb-4">Acciones rápidas</h3>
               <div className="space-y-2">
                 <button
-                  onClick={() => handleTabChange("whatsapp")}
+                  onClick={() => handleTabChange("marketing")}
                   className="w-full flex items-center justify-between px-4 py-3 bg-slate-50 hover:bg-primary/5 hover:border-primary/20 border border-slate-100 rounded-xl transition-colors group"
                 >
                   <span className="text-sm font-semibold text-slate-600 group-hover:text-primary">Conectar WhatsApp</span>
@@ -355,50 +355,78 @@ export default function OverviewSection() {
           </div>
         ) : (
           <div className="flex flex-col gap-6 pb-6 animate-in fade-in zoom-in-95 duration-200">
-            {/* Customers KPIs */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-white border border-slate-100 rounded-2xl p-5 shadow-sm">
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Clientes Nuevos</p>
-                <div className="mt-2 flex items-end gap-3">
-                  <p className="text-3xl font-heading font-black text-emerald-500">124</p>
-                  <p className="text-xs font-bold text-emerald-500 bg-emerald-50 px-2 py-1 rounded-lg mb-1">+12% este mes</p>
-                </div>
-                <p className="text-xs text-slate-400 mt-2">Usuarios que compraron por primera vez.</p>
-              </div>
+            {/* Customers KPIs — computed from orders */}
+            {(() => {
+              // Group orders by unique phone to identify customers
+              const customerMap = new Map<string, number>();
+              orders.forEach(o => {
+                const phone = o.customer_phone?.trim();
+                if (phone) customerMap.set(phone, (customerMap.get(phone) || 0) + 1);
+              });
+              const totalCustomers = customerMap.size;
+              const newCustomers = Array.from(customerMap.values()).filter(count => count === 1).length;
+              const recurringCustomers = Array.from(customerMap.values()).filter(count => count >= 2).length;
+              const newPct = totalCustomers > 0 ? Math.round((newCustomers / totalCustomers) * 100) : 0;
+              const recurPct = totalCustomers > 0 ? Math.round((recurringCustomers / totalCustomers) * 100) : 0;
 
-              <div className="bg-white border border-slate-100 rounded-2xl p-5 shadow-sm">
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Clientes Recurrentes</p>
-                <div className="mt-2 flex items-end gap-3">
-                  <p className="text-3xl font-heading font-black text-primary">85</p>
-                  <p className="text-xs font-bold text-primary bg-primary/10 px-2 py-1 rounded-lg mb-1">+5% este mes</p>
-                </div>
-                <p className="text-xs text-slate-400 mt-2">Usuarios con más de 2 compras.</p>
-              </div>
+              return (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="bg-white border border-slate-100 rounded-2xl p-5 shadow-sm">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Clientes Nuevos</p>
+                    <div className="mt-2 flex items-end gap-3">
+                      <p className="text-3xl font-heading font-black text-emerald-500">{newCustomers}</p>
+                      <p className="text-xs font-bold text-emerald-500 bg-emerald-50 px-2 py-1 rounded-lg mb-1">{newPct}% del total</p>
+                    </div>
+                    <p className="text-xs text-slate-400 mt-2">Usuarios que compraron por primera vez.</p>
+                  </div>
 
-              <div className="bg-white border border-slate-100 rounded-2xl p-5 shadow-sm">
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Clientes Perdidos</p>
-                <div className="mt-2 flex items-end gap-3">
-                  <p className="text-3xl font-heading font-black text-red-500">23</p>
-                  <p className="text-xs font-bold text-red-500 bg-red-50 px-2 py-1 rounded-lg mb-1">-2% este mes</p>
-                </div>
-                <p className="text-xs text-slate-400 mt-2">Más de 30 días sin comprar.</p>
-              </div>
-            </div>
+                  <div className="bg-white border border-slate-100 rounded-2xl p-5 shadow-sm">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Clientes Recurrentes</p>
+                    <div className="mt-2 flex items-end gap-3">
+                      <p className="text-3xl font-heading font-black text-primary">{recurringCustomers}</p>
+                      <p className="text-xs font-bold text-primary bg-primary/10 px-2 py-1 rounded-lg mb-1">{recurPct}% del total</p>
+                    </div>
+                    <p className="text-xs text-slate-400 mt-2">Usuarios con más de 2 compras.</p>
+                  </div>
 
-            {/* Simulated Customer Chart/List area */}
-            <div className="bg-white border border-slate-100 rounded-2xl p-5 shadow-sm">
-              <h3 className="text-sm font-bold text-slate-800 mb-4">Composición de Clientes</h3>
-              <div className="h-40 flex items-center gap-4">
-                <div className="h-full w-4 bg-emerald-500 rounded-full flex-shrink-0" style={{ height: "100%" }} />
-                <div className="h-full w-4 bg-primary rounded-full flex-shrink-0" style={{ height: "68%" }} />
-                <div className="h-full w-4 bg-red-500 rounded-full flex-shrink-0" style={{ height: "18%" }} />
-                <div className="ml-4 flex flex-col gap-3">
-                  <div className="flex items-center gap-2 tracking-tight text-sm"><span className="w-3 h-3 bg-emerald-500 rounded-full"></span> Nuevos (53%)</div>
-                  <div className="flex items-center gap-2 tracking-tight text-sm"><span className="w-3 h-3 bg-primary rounded-full"></span> Recurrentes (36%)</div>
-                  <div className="flex items-center gap-2 tracking-tight text-sm"><span className="w-3 h-3 bg-red-500 rounded-full"></span> Perdidos (11%)</div>
+                  <div className="bg-white border border-slate-100 rounded-2xl p-5 shadow-sm">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total Clientes</p>
+                    <div className="mt-2 flex items-end gap-3">
+                      <p className="text-3xl font-heading font-black text-slate-700">{totalCustomers}</p>
+                    </div>
+                    <p className="text-xs text-slate-400 mt-2">Clientes únicos basado en pedidos.</p>
+                  </div>
                 </div>
-              </div>
-            </div>
+              );
+            })()}
+
+            {/* Customer composition chart */}
+            {(() => {
+              const customerMap = new Map<string, number>();
+              orders.forEach(o => {
+                const phone = o.customer_phone?.trim();
+                if (phone) customerMap.set(phone, (customerMap.get(phone) || 0) + 1);
+              });
+              const totalCustomers = customerMap.size || 1;
+              const newCustomers = Array.from(customerMap.values()).filter(count => count === 1).length;
+              const recurringCustomers = Array.from(customerMap.values()).filter(count => count >= 2).length;
+              const newPct = Math.round((newCustomers / totalCustomers) * 100);
+              const recurPct = Math.round((recurringCustomers / totalCustomers) * 100);
+
+              return (
+                <div className="bg-white border border-slate-100 rounded-2xl p-5 shadow-sm">
+                  <h3 className="text-sm font-bold text-slate-800 mb-4">Composición de Clientes</h3>
+                  <div className="h-40 flex items-end gap-4">
+                    <div className="w-8 bg-emerald-500 rounded-t-lg transition-all" style={{ height: `${Math.max(newPct, 5)}%` }} />
+                    <div className="w-8 bg-primary rounded-t-lg transition-all" style={{ height: `${Math.max(recurPct, 5)}%` }} />
+                    <div className="ml-4 flex flex-col gap-3 self-center">
+                      <div className="flex items-center gap-2 tracking-tight text-sm"><span className="w-3 h-3 bg-emerald-500 rounded-full"></span> Nuevos ({newPct}%)</div>
+                      <div className="flex items-center gap-2 tracking-tight text-sm"><span className="w-3 h-3 bg-primary rounded-full"></span> Recurrentes ({recurPct}%)</div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
           </div>
         )}
       </div>
