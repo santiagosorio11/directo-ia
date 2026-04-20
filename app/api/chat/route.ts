@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { callMasterAgent } from "@/lib/n8n";
+import { createClient } from "@/lib/supabase/server";
 
 /**
  * POST /api/chat
@@ -8,6 +9,12 @@ import { callMasterAgent } from "@/lib/n8n";
  */
 export async function POST(req: NextRequest) {
   try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { message, systemPrompt, sessionId = "default" } = await req.json();
 
     if (!message) {

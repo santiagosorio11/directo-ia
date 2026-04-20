@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { createClient as createServerClient } from "@/lib/supabase/server";
 import crypto from "crypto";
 
 const supabaseAdmin = createClient(
@@ -38,6 +39,12 @@ function decrypt(text: string) {
 
 export async function GET(req: NextRequest) {
   try {
+    const supabase = await createServerClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const restaurantId = req.nextUrl.searchParams.get("restaurantId");
 
     if (!restaurantId) {
@@ -62,6 +69,12 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
+    const supabase = await createServerClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { restaurantId, provider, apiKey } = await req.json();
 
     if (!restaurantId || !provider || !apiKey) {
@@ -126,6 +139,12 @@ export async function POST(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
   try {
+    const supabase = await createServerClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { id, restaurantId } = await req.json();
 
     if (!id || !restaurantId) {
