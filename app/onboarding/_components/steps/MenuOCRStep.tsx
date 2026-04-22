@@ -34,7 +34,7 @@ const compressImage = (file: File): Promise<File> => {
         const canvas = document.createElement('canvas');
         let width = img.width;
         let height = img.height;
-        const MAX_SIZE = 1600;
+        const MAX_SIZE = 2500; // Aumentado de 1600 para mejor resolución en menús grandes
 
         if (width > height) {
           if (width > MAX_SIZE) {
@@ -173,9 +173,9 @@ export function MenuOCRStep() {
           fileToUpload = await compressImage(fileToUpload);
         }
 
-        // Check if file is still too large (Next.js/Vercel limit 4.5MB)
-        if (fileToUpload.size > 4.5 * 1024 * 1024) {
-          throw new Error(`El archivo ${fileToUpload.name} es demasiado grande. Por favor sube uno menor a 4MB.`);
+        // Check if file is still too large (Aumentado a 10MB)
+        if (fileToUpload.size > 10 * 1024 * 1024) {
+          throw new Error(`El archivo ${fileToUpload.name} es demasiado grande. Por favor sube uno menor a 10MB.`);
         }
 
         const formData = new FormData();

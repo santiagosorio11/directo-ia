@@ -3,6 +3,7 @@
 import { useDashboard } from "@/app/dashboard/_context/DashboardContext";
 import { CheckCircle2, XCircle, AlertCircle, MessageCircle } from "lucide-react";
 import { useToast } from "./Toast";
+import { safeParseItems } from "@/lib/utils";
 
 export default function PaymentsSection() {
   const { orders, updateOrderStage } = useDashboard();
@@ -50,9 +51,10 @@ export default function PaymentsSection() {
                        {p.customer_name[0]}
                      </div>
                      <div className="min-w-0 flex-1">
-                       <div className="text-base sm:text-lg font-bold text-slate-800 truncate">{p.customer_name}</div>
-                       <div className="text-sm text-slate-500">{p.customer_phone}</div>
-                     </div>
+                        <div className="text-base sm:text-lg font-bold text-slate-800 truncate">{p.customer_name}</div>
+                        <div className="text-sm text-slate-500">{p.customer_phone}</div>
+                        {p.customer_address && <div className="text-[10px] text-slate-400 italic font-medium">{p.customer_address}</div>}
+                      </div>
                      <div className="text-right flex-shrink-0">
                        <div className="text-xs sm:text-sm text-slate-400 mb-1 font-bold uppercase tracking-wider">Monto</div>
                        <div className="text-lg sm:text-xl font-black text-primary font-heading">${p.total.toLocaleString()}</div>
@@ -62,12 +64,13 @@ export default function PaymentsSection() {
                    <div className="bg-slate-50 border border-slate-100 p-3 sm:p-4 rounded-xl sm:rounded-2xl">
                      <div className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-2">Resumen de orden</div>
                      <ul className="text-sm text-slate-600 space-y-1">
-                       {p.items?.map((item: any, idx: number) => (
-                         <li key={idx} className="flex justify-between">
-                           <span>{item.quantity}x {item.name}</span>
-                           <span className="font-medium">${(item.price * item.quantity).toLocaleString()}</span>
-                         </li>
-                       )) || <li>Sin productos detallados</li>}
+                        {safeParseItems(p.items).map((item: any, idx: number) => (
+                          <li key={idx} className="flex justify-between">
+                            <span>{item.quantity}x {item.name}</span>
+                            <span className="font-medium">${(item.price * item.quantity).toLocaleString()}</span>
+                          </li>
+                        ))}
+                        {safeParseItems(p.items).length === 0 && <li>Sin productos detallados</li>}
                      </ul>
                    </div>
                  </div>

@@ -5,6 +5,9 @@ import { createClient } from "@/lib/supabase/server";
  * Proxy para el OCR de n8n.
  * Esto evita errores de CORS al permitir que la petición se haga desde el servidor.
  */
+
+export const maxDuration = 60; // Aumentado para procesar archivos grandes
+
 export async function POST(req: NextRequest) {
   try {
     const supabase = await createClient();

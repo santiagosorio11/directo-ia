@@ -1,7 +1,7 @@
 "use client";
 
 import { useDashboard } from "@/app/dashboard/_context/DashboardContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   LayoutDashboard, ClipboardList, Wallet, Columns, Utensils,
   Megaphone, Settings, CalendarCheck
@@ -13,6 +13,12 @@ export default function Sidebar() {
   const { restaurant, agentConfig } = useDashboard();
   const [activeTab, setActiveTab] = useState("overview");
   const [mobileExpanded, setMobileExpanded] = useState(false);
+
+  useEffect(() => {
+    const handleTabChange = (e: any) => setActiveTab(e.detail);
+    window.addEventListener("dashboardTabChange", handleTabChange);
+    return () => window.removeEventListener("dashboardTabChange", handleTabChange);
+  }, []);
 
   const mainTabs = [
     { id: "overview",      name: "Inicio",               icon: LayoutDashboard },

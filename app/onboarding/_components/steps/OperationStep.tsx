@@ -32,10 +32,18 @@ export function OperationStep() {
   const handleNext = async () => {
     setIsProcessing(true);
     try {
+      const { menuProducts, ...dataWithoutMenu } = data;
+      
+      const payload = {
+        ...dataWithoutMenu,
+        // En vez de enviar todo el menú, enviamos instrucciones para el System Prompt
+        aiInstructions: "EL MENÚ NO DEBE IR EN EL PROMPT. Instruye al agente para que utilice la herramienta (Tool) 'read_menu' para consultar los platos y precios en tiempo real a la base de datos."
+      };
+
       const res = await fetch("/api/generate-prompt", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify(payload),
       });
       const result = await res.json();
       

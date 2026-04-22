@@ -2,29 +2,40 @@
 
 import { useDashboard } from "@/app/dashboard/_context/DashboardContext";
 import { MessageCircle } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import { formatItems } from "@/lib/utils";
 
 const STAGES = [
-  { id: 'en_progreso', name: 'Chat en curso', color: 'bg-blue-500' },
+  { id: 'en_progreso', name: 'Nuevo pedido', color: 'bg-blue-500' },
   { id: 'confirmacion_pago', name: 'Validando Pago', color: 'bg-yellow-500' },
   { id: 'pedido_confirmado', name: 'Confirmado', color: 'bg-green-500' },
   { id: 'en_preparacion', name: 'Cocina', color: 'bg-[#FF5200]' },
   { id: 'listo', name: 'Listo', color: 'bg-purple-500' },
-  { id: 'en_camino', name: 'En Camino', color: 'bg-pink-500' }
+  { id: 'en_camino', name: 'En Camino', color: 'bg-pink-500' },
+  { id: 'entregado', name: 'Entregado', color: 'bg-slate-400' }
 ];
 
 export default function KanbanSection() {
   const { orders, updateOrderStage } = useDashboard();
   const [columns, setColumns] = useState<Record<string, any[]>>({});
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const cols: Record<string, any[]> = {};
     STAGES.forEach(s => cols[s.id] = []);
     
+    const eightHoursAgo = new Date(Date.now() - 8 * 60 * 60 * 1000);
+    
     orders.forEach(o => {
+      // Exclude delivered orders older than 8 hours from view
+      if (o.pipeline_stage === 'entregado') {
+        const orderDate = new Date(o.created_at);
+        if (orderDate < eightHoursAgo) return;
+      }
+
       if (cols[o.pipeline_stage]) {
         cols[o.pipeline_stage].push(o);
-      } else if (o.pipeline_stage !== 'entregado' && o.pipeline_stage !== 'cancelado') {
+      } else if (o.pipeline_stage !== 'cancelado') {
         cols['en_progreso'].push(o);
       }
     });
@@ -45,6 +56,10 @@ export default function KanbanSection() {
     // Optimistically update UI
     setColumns(prev => {
       const newCols = { ...prev };
+      
+      // Defensive check: ensure both columns exist in our state
+      if (!newCols[sourceCol] || !newCols[targetCol]) return prev;
+
       const order = newCols[sourceCol].find(o => o.id === orderId);
       if (order) {
         newCols[sourceCol] = newCols[sourceCol].filter(o => o.id !== orderId);
@@ -59,10 +74,28 @@ export default function KanbanSection() {
 
   const allowDrop = (e: React.DragEvent) => {
     e.preventDefault();
+    
+    // Autoscroll logic
+    if (containerRef.current) {
+      const container = containerRef.current;
+      const { clientX } = e;
+      const { left, width } = container.getBoundingClientRect();
+      const edgeSize = 120;
+      
+      if (clientX < left + edgeSize) {
+        container.scrollLeft -= 12;
+      } else if (clientX > left + width - edgeSize) {
+        container.scrollLeft += 12;
+      }
+    }
   };
 
   return (
-    <div className="flex flex-col lg:flex-row h-[calc(100vh-180px)] lg:h-[calc(100vh-140px)] w-full gap-4 overflow-x-auto overflow-y-hidden pb-4 [&::-webkit-scrollbar]:hidden">
+    <div 
+      ref={containerRef}
+      onDragOver={allowDrop}
+      className="flex flex-col lg:flex-row h-[calc(100vh-180px)] lg:h-[calc(100vh-140px)] w-full gap-4 overflow-x-auto pb-4 scroll-smooth"
+    >
       {STAGES.map(stage => (
         <div 
           key={stage.id} 
@@ -92,13 +125,20 @@ export default function KanbanSection() {
                   <div className="font-bold text-slate-800 text-sm truncate mr-2">{order.customer_name}</div>
                   <div className="text-xs text-primary font-black flex-shrink-0">${order.total}</div>
                 </div>
-                <div className="text-[10px] sm:text-xs text-slate-400 font-medium mb-3">{order.customer_phone}</div>
+                <div className="text-[10px] sm:text-xs text-slate-400 font-medium">{order.customer_phone}</div>
+                {order.customer_address && (
+                  <div className="text-[10px] text-slate-400 italic mt-1 bg-slate-50 p-1.5 rounded-lg border border-slate-100">{order.customer_address}</div>
+                )}
+                
+                <div className="mt-3 bg-primary/5 p-2 rounded-xl border border-primary/10">
+                  <p className="text-[10px] font-black text-primary uppercase tracking-widest mb-1">Pedido:</p>
+                  <p className="text-xs text-slate-600 font-medium leading-relaxed">{formatItems(order.items)}</p>
+                </div>
                 
                 <div className="flex justify-between items-center mt-3 pt-3 border-t border-slate-50">
-                   <div className="text-[10px] uppercase font-black text-slate-300 tracking-wider transition-colors group-hover:text-slate-400">{order.items?.length || 0} items</div>
-                   <button className="text-slate-300 hover:text-primary transition-colors">
-                     <MessageCircle className="w-4 h-4" />
-                   </button>
+                    <button className="text-slate-300 hover:text-primary transition-colors p-2 hover:bg-primary/10 rounded-lg">
+                      <MessageCircle className="w-4 h-4" />
+                    </button>
                 </div>
               </div>
             ))}

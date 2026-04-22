@@ -13,6 +13,7 @@ import {
   Power,
   ArrowRight,
 } from "lucide-react";
+import { safeParseItems } from "@/lib/utils";
 
 
 interface Metrics {
@@ -25,7 +26,7 @@ interface Metrics {
 }
 
 export default function OverviewSection() {
-  const { restaurant, agentConfig, orders, updateAgentStatus } = useDashboard();
+  const { restaurant, agentConfig, orders, updateAgentStatus, createTestOrder } = useDashboard();
   const [metrics, setMetrics] = useState<Metrics | null>(null);
   const [metricsLoading, setMetricsLoading] = useState(true);
   const [activeSubTab, setActiveSubTab] = useState<"sales" | "customers">("sales");
@@ -282,6 +283,13 @@ export default function OverviewSection() {
               <h3 className="text-sm font-bold text-slate-800 mb-4">Acciones rápidas</h3>
               <div className="space-y-2">
                 <button
+                  onClick={() => createTestOrder()}
+                  className="w-full flex items-center justify-between px-4 py-3 bg-emerald-500 hover:bg-emerald-600 border border-emerald-400 rounded-xl transition-colors group shadow-lg shadow-emerald-500/20 mb-3"
+                >
+                  <span className="text-sm font-black text-white px-1">🚀 Generar Pedido Prueba</span>
+                  <ShoppingBag className="w-4 h-4 text-white animate-pulse" />
+                </button>
+                <button
                   onClick={() => handleTabChange("marketing")}
                   className="w-full flex items-center justify-between px-4 py-3 bg-slate-50 hover:bg-primary/5 hover:border-primary/20 border border-slate-100 rounded-xl transition-colors group"
                 >
@@ -338,7 +346,7 @@ export default function OverviewSection() {
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-semibold text-slate-700 truncate">{o.customer_name}</p>
                       <p className="text-[10px] text-slate-400">
-                        {new Date(o.created_at).toLocaleString("es-CO", { dateStyle: "short", timeStyle: "short" })} · {o.items?.length || 0} items
+                        {new Date(o.created_at).toLocaleString("es-CO", { dateStyle: "short", timeStyle: "short" })} · {safeParseItems(o.items).length} items
                       </p>
                     </div>
                     <div className="text-right flex-shrink-0 ml-3">

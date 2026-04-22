@@ -2,6 +2,7 @@
 
 import { useDashboard } from "@/app/dashboard/_context/DashboardContext";
 import { Search, Filter, Eye } from "lucide-react";
+import { formatItems } from "@/lib/utils";
 
 export default function OrdersSection() {
   const { orders } = useDashboard();
@@ -36,21 +37,25 @@ export default function OrdersSection() {
               <div className="flex items-start justify-between">
                 <div>
                   <div className="font-bold text-sm text-slate-800">{o.customer_name}</div>
-                  <div className="text-xs text-slate-400">{o.customer_phone}</div>
-                </div>
+                   <div className="text-xs text-slate-400">{o.customer_phone}</div>
+                   {o.customer_address && <div className="text-[10px] text-slate-400 italic">{o.customer_address}</div>}
+                 </div>
                 <div className="text-sm font-bold text-slate-900">${o.total.toLocaleString()}</div>
               </div>
               <div className="flex items-center justify-between">
                 <div className="text-xs text-slate-500">
                   {new Date(o.created_at).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}
                 </div>
-                <div className="text-xs text-slate-500">{o.items?.length || 0} items</div>
+                 <div className="text-xs text-slate-500 font-medium line-clamp-1">{formatItems(o.items)}</div>
               </div>
               <div className="flex items-center justify-between pt-3 border-t border-slate-100">
                 <div className="px-3 py-1 rounded-full bg-slate-50 text-slate-600 text-[10px] uppercase tracking-widest font-bold border border-slate-200">
-                  {o.pipeline_stage.replace('_', ' ')}
+                  {o.pipeline_stage === 'en_progreso' ? 'nuevo pedido' : o.pipeline_stage.replace('_', ' ')}
                 </div>
-                <button className="text-primary hover:scale-110 transition-transform p-2 bg-primary/10 rounded-xl">
+                <button 
+                  onClick={() => window.dispatchEvent(new CustomEvent("dashboardTabChange", { detail: "kanban" }))}
+                  className="text-primary hover:scale-110 transition-transform p-2 bg-primary/10 rounded-xl"
+                >
                   <Eye className="w-4 h-4" />
                 </button>
               </div>
@@ -85,24 +90,28 @@ export default function OrdersSection() {
                   <tr key={o.id} className="border-b border-slate-50 hover:bg-slate-50/80 transition-colors">
                     <td className="p-6">
                       <div className="font-bold text-sm text-slate-800">{o.customer_name}</div>
-                      <div className="text-xs text-slate-400">{o.customer_phone}</div>
-                    </td>
+                       <div className="text-xs text-slate-400">{o.customer_phone}</div>
+                       {o.customer_address && <div className="text-[10px] text-slate-400 italic">{o.customer_address}</div>}
+                     </td>
                     <td className="p-6 text-sm text-slate-500">
                       {new Date(o.created_at).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}
                     </td>
-                    <td className="p-6 text-sm text-slate-500">
-                      {o.items?.length || 0} items
-                    </td>
+                     <td className="p-6 text-sm text-slate-500 max-w-[200px]">
+                       <div className="truncate" title={formatItems(o.items)}>{formatItems(o.items)}</div>
+                     </td>
                     <td className="p-6 text-sm font-bold text-slate-900">
                       ${o.total.toLocaleString()}
                     </td>
                     <td className="p-6">
                       <div className="px-3 py-1 rounded-full bg-slate-50 text-slate-600 text-[10px] uppercase tracking-widest font-bold w-fit border border-slate-200">
-                        {o.pipeline_stage.replace('_', ' ')}
+                        {o.pipeline_stage === 'en_progreso' ? 'nuevo pedido' : o.pipeline_stage.replace('_', ' ')}
                       </div>
                     </td>
                     <td className="p-6 text-right">
-                      <button className="text-primary hover:scale-110 transition-transform p-2 bg-primary/10 rounded-xl">
+                      <button 
+                        onClick={() => window.dispatchEvent(new CustomEvent("dashboardTabChange", { detail: "kanban" }))}
+                        className="text-primary hover:scale-110 transition-transform p-2 bg-primary/10 rounded-xl"
+                      >
                         <Eye className="w-4 h-4" />
                       </button>
                     </td>

@@ -22,12 +22,32 @@ export function SuccessStep() {
   const [isTyping, setIsTyping] = useState(false);
   const [isActivating, setIsActivating] = useState(false);
   const [sessionId] = useState(() => Math.random().toString(36).substring(7));
+  const [restaurantId, setRestaurantId] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // Intentar activar automáticamente para permitir que el chat funcione con el menú real
+    autoProvisionRestaurant();
     setCustomNextHandler(() => handleActivate);
     return () => setCustomNextHandler(null);
   }, [setCustomNextHandler]);
+
+  const autoProvisionRestaurant = async () => {
+    try {
+      const res = await fetch("/api/activate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+      const result = await res.json();
+      if (result.success && result.restaurantId) {
+        setRestaurantId(result.restaurantId);
+        localStorage.setItem("directo_restaurant_id", result.restaurantId);
+      }
+    } catch (e) {
+      console.error("Auto-provisioning error", e);
+    }
+  };
 
   const handleActivate = async () => {
     setIsActivating(true);
@@ -76,7 +96,8 @@ export function SuccessStep() {
         body: JSON.stringify({
           sessionId,
           message: userMsg,
-          systemPrompt: data.generatedSystemPrompt
+          systemPrompt: data.generatedSystemPrompt,
+          restaurantId: restaurantId // Enviar el ID para que n8n pueda consultar el menú
         }),
       });
 

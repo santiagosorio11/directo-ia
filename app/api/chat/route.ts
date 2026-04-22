@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { message, systemPrompt, sessionId = "default" } = await req.json();
+    const { message, systemPrompt, sessionId = "default", restaurantId } = await req.json();
 
     if (!message) {
       return NextResponse.json({ error: "El campo 'message' es requerido." }, { status: 400 });
@@ -27,9 +27,14 @@ export async function POST(req: NextRequest) {
       systemPrompt,
       message,
       sessionId,
-    });
+      restaurantId
+    } as any);
 
-    const replyText = agentResponse.output || agentResponse.message || agentResponse;
+    const replyText = 
+      agentResponse.output || 
+      agentResponse.message || 
+      agentResponse.text || 
+      (typeof agentResponse === "string" ? agentResponse : JSON.stringify(agentResponse));
 
     return NextResponse.json({ message: replyText });
 

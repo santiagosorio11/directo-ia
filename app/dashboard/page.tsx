@@ -11,6 +11,7 @@ import MenuSection from "./components/MenuSection";
 import MarketingSection from "./components/MarketingSection";
 import SettingsSection from "./components/SettingsSection";
 import AdminChatSection from "./components/AdminChatSection";
+import SalesChatSandbox from "./components/SalesChatSandbox";
 import { Loader2 } from "lucide-react";
 
 export default function DashboardPage() {
@@ -22,6 +23,8 @@ export default function DashboardPage() {
     window.addEventListener("dashboardTabChange", handleTabChange);
     return () => window.removeEventListener("dashboardTabChange", handleTabChange);
   }, []);
+
+  const [sidebarMode, setSidebarMode] = useState<"admin" | "sales">("admin");
 
   if (isLoading) {
     return (
@@ -48,12 +51,34 @@ export default function DashboardPage() {
         {activeTab === "settings" && <SettingsSection />}
       </div>
 
-      {/* Agente Administrador Global (Oculto en Kanban u Operaciones) */}
-      {activeTab !== "kanban" && (
-        <div className="hidden lg:flex w-[30%] min-w-[320px] max-w-[400px] flex-shrink-0 border border-slate-200 rounded-2xl overflow-hidden shadow-sm bg-white">
-          <AdminChatSection embedded />
+      {/* Agente Global Lateral (Switchable) */}
+      <div className={`hidden lg:flex flex-col w-[30%] min-w-[320px] max-w-[400px] flex-shrink-0 border border-slate-200 rounded-2xl overflow-hidden shadow-sm bg-white relative ${activeTab === "kanban" ? "!hidden" : ""}`}>
+        {/* Switch Tab */}
+        <div className="flex p-1 bg-slate-100/50 m-2 rounded-xl border border-slate-100">
+          <button 
+            onClick={() => setSidebarMode("admin")}
+            className={`flex-1 py-2 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all ${sidebarMode === 'admin' ? 'bg-white text-slate-800 shadow-sm shadow-slate-200' : 'text-slate-400 hover:text-slate-600'}`}
+          >
+            Admin IA
+          </button>
+          <button 
+            onClick={() => setSidebarMode("sales")}
+            className={`flex-1 py-2 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all ${sidebarMode === 'sales' ? 'bg-white text-slate-800 shadow-sm shadow-slate-200' : 'text-slate-400 hover:text-slate-600'}`}
+          >
+            Prueba Ventas
+          </button>
         </div>
-      )}
+
+        <div className="flex-1 overflow-hidden relative">
+          <div className={`h-full ${sidebarMode === "admin" ? "block" : "hidden"}`}>
+            <AdminChatSection embedded />
+          </div>
+          <div className={`h-full ${sidebarMode === "sales" ? "block" : "hidden"}`}>
+            <SalesChatSandbox />
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
+

@@ -42,6 +42,7 @@ export async function callMasterAgent(payload: {
   systemPrompt: string;
   message: string;
   sessionId: string;
+  restaurantId?: string;
 }) {
   const N8N_MASTER_AGENT_URL = process.env.N8N_MASTER_AGENT_URL;
 

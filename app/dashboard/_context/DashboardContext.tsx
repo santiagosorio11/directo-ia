@@ -34,6 +34,7 @@ export interface Order {
   id: string;
   customer_name: string;
   customer_phone: string;
+  customer_address?: string;
   items: any[];
   total: number;
   pipeline_stage: string;
@@ -82,7 +83,7 @@ export interface Promotion {
   description?: string;
   discount_type?: string;
   discount_value?: number;
-  applies_to: string[];
+  applies_to: any;
   status: 'activa' | 'pausada' | 'borrador' | 'expirada';
   start_date?: string;
   end_date?: string;
@@ -121,6 +122,9 @@ interface DashboardContextProps {
   deletePromotion: (id: string) => Promise<void>;
   // Orders
   updateOrderStage: (id: string, stage: string) => Promise<void>;
+  addOrder: (order: Partial<Order>) => Promise<{ data: any; error: any }>;
+  createTestOrder: () => Promise<void>;
+
   // Restaurant
   updateRestaurant: (updates: Partial<Restaurant>) => Promise<void>;
   logout: () => void;
@@ -435,6 +439,34 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const addOrder = async (order: Partial<Order>) => {
+    if (!restaurant) return { data: null, error: 'No restaurant' };
+    const { data, error } = await supabaseBrowser.from("orders").insert({
+      ...order,
+      restaurant_id: restaurant.id,
+      pipeline_stage: order.pipeline_stage || 'nuevo',
+      payment_status: order.payment_status || 'pendiente'
+    }).select().single();
+    if (!error && data) {
+      setOrders(prev => [data, ...prev]);
+    }
+    return { data, error };
+  };
+
+  const createTestOrder = async () => {
+    if (!restaurant || menu.length === 0) return;
+    const randomItem = menu[Math.floor(Math.random() * menu.length)];
+    const testOrder = {
+       customer_name: "Cliente de Prueba",
+       customer_phone: "+573000000000",
+       items: [{ id: randomItem.id, name: randomItem.name, price: randomItem.price, quantity: 1 }],
+       total: randomItem.price,
+       pipeline_stage: 'en_progreso',
+       payment_status: 'pendiente'
+    };
+    await addOrder(testOrder);
+  };
+
   // ─── Restaurant ───
   const updateRestaurant = async (updates: Partial<Restaurant>) => {
     if (!restaurant) return;
@@ -478,6 +510,8 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
       updatePromotion,
       deletePromotion,
       updateOrderStage,
+      addOrder,
+      createTestOrder,
       updateRestaurant,
       logout,
       isLoading
