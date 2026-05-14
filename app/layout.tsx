@@ -4,6 +4,10 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "DIRECTO | Infraestructura de Ventas por WhatsApp",
   description: "La app descubre. WhatsApp convierte. El restaurante retiene. Activa tu vendedor con IA en minutos.",
+  icons: {
+    icon: "/favicon.svg",
+    apple: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({
