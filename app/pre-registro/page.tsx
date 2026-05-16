@@ -107,26 +107,27 @@ export default function PreRegistroPage() {
       </div>
 
       {/* Form Right Side */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12 lg:p-20 relative">
-        <div className="absolute top-6 left-6 lg:hidden">
-          <Image 
-            src="/logotipo.svg" 
-            alt="Directo Logo" 
-            width={160} 
-            height={48} 
-          />
-        </div>
-
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="w-full max-w-md"
-        >
-          <div className="mb-10 mt-12 lg:mt-0">
-            <h2 className="text-3xl font-bold text-foreground mb-3 font-heading">Únete a la espera</h2>
-            <p className="text-muted-foreground text-lg">Completa tus datos para recibir acceso anticipado y ofertas exclusivas de lanzamiento.</p>
+      <div className="w-full lg:w-1/2 flex flex-col items-center justify-center p-6 sm:p-12 lg:p-20 relative min-h-[100dvh] lg:min-h-0">
+        <div className="w-full max-w-md flex flex-col">
+          <div className="mb-12 lg:hidden">
+            <Image 
+              src="/logotipo.svg" 
+              alt="Directo Logo" 
+              width={160} 
+              height={48} 
+            />
           </div>
+
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="w-full"
+          >
+            <div className="mb-10">
+              <h2 className="text-3xl font-bold text-foreground mb-3 font-heading">Únete a la espera</h2>
+              <p className="text-muted-foreground text-lg">Completa tus datos para recibir acceso anticipado y ofertas exclusivas de lanzamiento.</p>
+            </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
             {error && (

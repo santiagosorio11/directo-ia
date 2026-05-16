@@ -12,22 +12,28 @@
 1. 🤖 UN VENDEDOR QUE NO DUERME NI PIDE VACACIONES
 Su WhatsApp ahora va a tener un experto que atiende de una. Responde preguntas, recomienda el plato del día y cierra la venta solito. ¡Usted solo preocúpese por cocinar bien bacano!
 
-2. 👥 ¡LOS CLIENTES SON SUYOS Y DE NADIE MÁS!
-Aquí no le escondemos nada. A diferencia de otras apps que se quedan con la info, con Directo todos los datos de sus clientes son TOTALMENTE transparentES para usted. Usted sabe quién le compra, qué le gusta y cómo volverlo a llamar. La base de datos es SUYA, punto.
+2. 🧠 UN "ADMIN" QUE SÍ LE COPIA (¡HASTA POR NOTA DE VOZ!)
+Usted va a tener un Agente Admin en su propio WhatsApp. ¿Quiere saber cómo van las ventas? Pregúntele. ¿Quiere que el sistema aprenda algo nuevo? Dígaselo. Lo mejor es que puede mandarle notas de voz dándole feedback como si fuera un empleado más, y la IA va aprendiendo de usted para mejorar cada día. ¡Es como tener un socio que sí escucha!
 
-3. 📋 RESERVAS SIN TANTO ENREDO
+3. ⏱️ ARRANQUE EN UN ABIERTO Y CERRADO DE OJOS
+Nada de procesos largos ni aburridos. El proceso para empezar es tan sencillo que en menos de 15 minutos ya tiene todo el sistema funcionando y listo para recibir pedidos. ¡Ponerse las pilas nunca fue tan fácil!
+
+4. 👥 ¡LOS CLIENTES SON SUYOS Y DE NADIE MÁS!
+Aquí no le escondemos nada. A diferencia de otras apps que se quedan con la info, con Directo todos los datos de sus clientes son TOTALMENTE transparentes para usted. Usted sabe quién le compra, qué le gusta y cómo volverlo a llamar. La base de datos es SUYA, punto.
+
+5. 📋 RESERVAS SIN TANTO ENREDO
 Olvídese de ese cuaderno viejo y rayado. Las reservas entran derechito y usted las controla desde su celular. Si el cliente dice que va, ahí queda anotado sin que se le pase ni una.
 
-4. 📸 DE LA CARTA AL CELULAR EN UN SANTIAMÉN
+6. 📸 DE LA CARTA AL CELULAR EN UN SANTIAMÉN
 ¿Cambió los precios? ¿Tiene platos nuevos? Solo tómele una foto al menú y nuestra tecnología lo sube por usted. Sin sentarse horas a escribir en un computador, ¡eso ya es cosa del pasado!
 
-5. 🚚 TODO BAJO CONTROL EN LA COCINA
+7. 🚚 TODO BAJO CONTROL EN LA COCINA
 Vea clarito qué pedido está saliendo, cuál está en camino y cuál ya se entregó. Así usted sabe si en la cocina se están poniendo las pilas o si hay que meterle más voleo.
 
-6. 🔗 SE ENTIENDE CON LO QUE USTED YA TIENE
+8. 🔗 SE ENTIENDE CON LO QUE USTED YA TIENE
 Nos conectamos de una con los sistemas que usted ya usa (Loggro, Toteat, Vendty, Siigo y los demás). Todo cuadra perfecto: lo que se vende por el chat le aparece en sus cuentas de una vez.
 
-7. 📈 PROMOCIONES QUE SÍ DAN PLATA
+9. 📈 PROMOCIONES QUE SÍ DAN PLATA
 Arme el 2x1, los descuentos o los regalitos para sus clientes fieles. La herramienta se encarga de ofrecérselos a la gente en el momento preciso para que usted venda más.
 
 ============================================================
@@ -38,4 +44,4 @@ Porque aquí lo que importa es que su restaurante crezca. No somos un intermedia
 ¡Póngase las pilas y entre ya a la lista de espera!
 Regístrese aquí: /pre-registro
 
-#DirectoIA #RestauranteColombiano #PaDelante #VentasWhatsApp #SinTantoEnredo
+#DirectoIA #RestauranteColombiano #PaDelante #VentasWhatsApp #SinTantoEnredo #IAqueAprende
